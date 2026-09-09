@@ -37,48 +37,50 @@ const handleLogin = async () => {
 </script>
 
 <template>
-  <div>
-    <div class="text-center mb-6">
-      <span class="text-4xl">🏪</span>
-      <h2 class="text-2xl font-bold text-gray-800 mt-2">Masuk ke SembakoMart</h2>
-      <p class="text-xs text-gray-500 mt-1">Masukkan akun untuk mulai berbelanja</p>
-    </div>
-
-    <div v-if="errorMessage" class="mb-4 rounded-lg bg-red-50 p-3 text-xs text-red-600 border border-red-200">
-      {{ errorMessage }}
-    </div>
-
-    <form @submit.prevent="handleLogin" class="space-y-4">
-      <div>
-        <label class="block text-xs font-semibold text-gray-700 mb-1">Email / No. HP</label>
-        <input 
-          v-model="email" 
-          type="email" 
-          required 
-          placeholder="contoh@email.com" 
-          class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
-        />
+  <div class="flex min-h-[calc(100vh-80px)] items-center justify-center bg-slate-100 px-4 py-10">
+    <div class="w-full max-w-md rounded-[28px] border border-slate-300 bg-white p-8 shadow-[0_20px_50px_rgba(15,23,42,0.08)]">
+      <div class="mb-8 text-center">
+        <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-500 text-2xl text-white shadow-sm">🏪</div>
+        <h2 class="mt-5 text-2xl font-semibold tracking-tight text-slate-900">Masuk ke SembakoMart</h2>
+        <p class="mt-2 text-sm text-slate-600">Silakan login untuk melanjutkan belanja</p>
       </div>
 
-      <div>
-        <label class="block text-xs font-semibold text-gray-700 mb-1">Kata Sandi</label>
-        <input 
-          v-model="password" 
-          type="password" 
-          required 
-          placeholder="••••••••" 
-          class="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
-        />
+      <div v-if="errorMessage" class="mb-5 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">
+        {{ errorMessage }}
       </div>
 
-      <button 
-        type="submit" 
-        :disabled="loading"
-        class="w-full rounded-lg bg-emerald-600 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-700 disabled:opacity-50"
-      >
-        <span v-if="loading">Memproses...</span>
-        <span v-else>Masuk Sekarang</span>
-      </button>
-    </form>
+      <form @submit.prevent="handleLogin" class="space-y-5">
+        <div>
+          <label class="mb-2 block text-xs font-semibold uppercase tracking-[0.18em] text-slate-600">Email / No. HP</label>
+          <input
+            v-model="email"
+            type="email"
+            required
+            placeholder="contoh@email.com"
+            class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-slate-500 focus:bg-white"
+          />
+        </div>
+
+        <div>
+          <label class="mb-2 block text-xs font-semibold uppercase tracking-[0.18em] text-slate-600">Kata Sandi</label>
+          <input
+            v-model="password"
+            type="password"
+            required
+            placeholder="••••••••"
+            class="w-full rounded-xl border border-slate-300 bg-slate-50 px-3 py-2.5 text-sm text-slate-800 outline-none transition focus:border-slate-500 focus:bg-white"
+          />
+        </div>
+
+        <button
+          type="submit"
+          :disabled="loading"
+          class="w-full rounded-xl bg-slate-500 py-3 text-sm font-semibold text-white transition hover:bg-slate-600 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          <span v-if="loading">Memproses...</span>
+          <span v-else>Masuk Sekarang</span>
+        </button>
+      </form>
+    </div>
   </div>
 </template>

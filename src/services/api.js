@@ -1,19 +1,25 @@
 import axios from 'axios'
 
 const api = axios.create({
-  baseURL: 'http://10.94.15.134:8000/api',
+  baseURL: 'http://10.10.8.174:8000/api',
   headers: {
     'Content-Type': 'application/json',
-    'Accept': 'application/json' // Wajib agar Laravel merespons dengan JSON (401), bukan redirect
+    'Accept': 'application/json'
   }
 })
 
-// Pasang Bearer Token
+// Pasang Bearer Token dan handle FormData
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token')
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
+
+  // Jika data adalah FormData, hapus Content-Type agar browser set dengan benar (termasuk boundary)
+  if (config.data instanceof FormData) {
+    delete config.headers['Content-Type']
+  }
+
   return config
 })
 

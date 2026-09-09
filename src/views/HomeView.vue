@@ -1,10 +1,12 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import api from '../services/api'
+
+const router = useRouter()
 
 const categories = ref(['Semua', 'Beras', 'Minyak', 'Gula & Garam', 'Bumbu'])
 const selectedCategory = ref('Semua')
-
 const products = ref([])
 const loading = ref(true)
 const errorMessage = ref('')
@@ -13,9 +15,11 @@ const cartCount = ref(0)
 const fetchProducts = async () => {
   loading.value = true
   errorMessage.value = ''
+
   try {
     const response = await api.get('/products')
-    products.value = response.data.data || response.data
+    const rawData = response.data.data || response.data
+    products.value = Array.isArray(rawData) ? rawData.filter(item => item !== null) : []
   } catch (error) {
     console.error('Gagal mengambil data produk:', error)
     errorMessage.value = 'Gagal memuat data dari server database.'
@@ -24,36 +28,124 @@ const fetchProducts = async () => {
   }
 }
 
+const getCategoryName = (kategori) => {
+  if (!kategori) return '-'
+  if (typeof kategori === 'object') {
+    return kategori.nama_kategori || kategori.nama || '-'
+  }
+  return kategori
+}
+
+const filteredProducts = computed(() => {
+  if (selectedCategory.value === 'Semua') {
+    return products.value
+  }
+
+  const target = selectedCategory.value.toLowerCase()
+
+  return products.value.filter(product => {
+    if (!product) return false
+
+    const catName = getCategoryName(product.kategori).toLowerCase()
+    const productName = (product.nama_produk || product.nama || '').toLowerCase()
+    const categoryId = String(product.kategori_id || product.kategori?.id || '')
+
+    const matchesId =
+      (target.includes('beras') && categoryId === '1') ||
+      (target.includes('minyak') && categoryId === '2') ||
+      (target.includes('bumbu') && categoryId === '3')
+
+    return catName.includes(target) || matchesId || productName.includes(target.split(' ')[0])
+  })
+})
+
+const goToDetail = (id) => {
+  if (!id) return
+  router.push(`/produk/${id}`)
+}
+
+const apiBaseUrl = (api.defaults.baseURL || 'http://10.10.8.174:8000/api').replace(/\/api\/?$/, '')
+
+const getProductImageUrl = (product) => {
+  const imageValue = product?.gambar || product?.foto || product?.image || product?.foto_url || product?.image_url || product?.photo || product?.cover || ''
+
+  if (!imageValue || typeof imageValue !== 'string') {
+    return 'https://placehold.co/300x300/cbd5e1/475569?text=Produk'
+  }
+
+  const normalized = imageValue.trim()
+
+  if (normalized.startsWith('data:image')) return normalized
+  if (normalized.startsWith('http://') || normalized.startsWith('https://')) return normalized
+  if (normalized.startsWith('/')) return `${apiBaseUrl}${normalized}`
+
+  if (normalized.includes('/') || normalized.includes('\\')) {
+    return `${apiBaseUrl}/${normalized.replace(/^\/+/, '')}`
+  }
+
+  return `${apiBaseUrl}/storage/${normalized.replace(/^\/+/, '')}`
+}
+
+const addToCart = (product, event) => {
+  event.stopPropagation()
+  if (!product) return
+
+  cartCount.value++
+
+  const cart = JSON.parse(localStorage.getItem('cart') || '[]')
+  const existingItem = cart.find(item => item?.id === product.id)
+
+  if (existingItem) {
+    existingItem.qty++
+  } else {
+    cart.push({
+      id: product.id,
+      nama: product.nama_produk || product.nama,
+      harga: product.harga,
+      gambar: getProductImageUrl(product),
+      qty: 1
+    })
+  }
+
+  localStorage.setItem('cart', JSON.stringify(cart))
+  alert(`${product.nama_produk || product.nama} berhasil ditambahkan ke keranjang!`)
+}
+
 onMounted(() => {
   fetchProducts()
 })
-
-const addToCart = (product) => {
-  cartCount.value++
-  alert(`${product.nama} berhasil ditambahkan ke keranjang!`)
-}
 </script>
 
 <template>
-  <div>
-    <!-- Banner Promo -->
-    <section class="mb-6 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-700 p-6 text-white shadow-lg">
-      <span class="rounded-full bg-emerald-800/50 px-3 py-1 text-xs font-semibold uppercase">Promo Sembako</span>
-      <h2 class="mt-2 text-2xl font-extrabold sm:text-3xl">Belanja Sembako Murah & Lengkap</h2>
-      <p class="mt-1 text-sm text-emerald-100">Kebutuhan dapur harian langsung dari toko terdekat.</p>
+  <div class="space-y-6">
+    <section class="rounded-3xl bg-gradient-to-br from-slate-300 via-slate-200 to-slate-300 p-6 shadow-sm sm:p-8">
+      <div class="flex items-center justify-between gap-4">
+        <div>
+          <span class="inline-flex rounded-full border border-slate-400 bg-white/70 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-700">
+            Promo Sembako
+          </span>
+          <h2 class="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+            Belanja kebutuhan harianmu dengan praktis
+          </h2>
+        </div>
+      </div>
+      <p class="mt-3 max-w-2xl text-sm text-slate-700">
+        Kebutuhan dapur harian langsung dari toko terdekat dengan pilihan produk yang rapi dan mudah dipilih.
+      </p>
     </section>
 
-    <!-- Kategori Filter -->
-    <section class="mb-6">
-      <h3 class="mb-3 text-lg font-bold text-gray-700">Kategori</h3>
-      <div class="flex gap-2 overflow-x-auto pb-2">
-        <button 
-          v-for="cat in categories" 
+    <section class="rounded-3xl border border-slate-300 bg-gradient-to-br from-white to-slate-50 p-5 shadow-sm sm:p-6">
+      <h3 class="mb-4 text-lg font-semibold text-slate-900">Kategori</h3>
+      <div class="flex flex-wrap gap-2">
+        <button
+          v-for="cat in categories"
           :key="cat"
           @click="selectedCategory = cat"
           :class="[
-            'whitespace-nowrap rounded-full px-4 py-1.5 text-sm font-medium transition',
-            selectedCategory === cat ? 'bg-emerald-600 text-white shadow-sm' : 'bg-white text-gray-600 border border-gray-200'
+            'whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition',
+            selectedCategory === cat
+              ? 'bg-slate-500 text-white shadow-md'
+              : 'border border-slate-300 bg-slate-100 text-slate-700 hover:border-slate-400 hover:bg-slate-200'
           ]"
         >
           {{ cat }}
@@ -61,61 +153,76 @@ const addToCart = (product) => {
       </div>
     </section>
 
-    <!-- Section Produk -->
-    <section>
-      <div class="flex justify-between items-center mb-4">
-        <h3 class="text-lg font-bold text-gray-700">Daftar Produk</h3>
-        <span class="text-xs text-gray-500">Keranjang: {{ cartCount }} item</span>
+    <section class="rounded-3xl border border-slate-300 bg-gradient-to-br from-white to-slate-50 p-5 shadow-sm sm:p-6">
+      <div class="mb-5 flex items-center justify-between gap-3">
+        <h3 class="text-lg font-semibold text-slate-900">Daftar Produk</h3>
+        <button
+          @click="router.push('/keranjang')"
+          class="inline-flex items-center gap-2 rounded-lg border border-slate-400 bg-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-800 transition hover:border-slate-500 hover:bg-slate-300"
+        >
+          🛒 Keranjang: {{ cartCount }} item
+        </button>
       </div>
 
-      <!-- TEMPAT KODE DITARUH (Gantikan Grid Produk Lama) -->
-      <div v-if="loading" class="text-center py-10 text-gray-500">
+      <div v-if="loading" class="py-12 text-center text-sm text-slate-500">
         Memuat data dari database...
       </div>
 
-      <div v-else-if="errorMessage" class="text-center py-10 text-red-500">
+      <div v-else-if="errorMessage" class="py-12 text-center text-sm text-red-500">
         {{ errorMessage }}
       </div>
 
-      <div v-else class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
-        <div 
-          v-for="product in products" 
-          :key="product.id"
-          class="flex flex-col justify-between rounded-xl border border-gray-100 bg-white p-3 shadow-sm hover:shadow-md transition"
+      <div v-else-if="filteredProducts.length === 0" class="py-12 text-center text-sm text-slate-400">
+        Tidak ada produk dalam kategori ini.
+      </div>
+
+      <div v-else class="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-5">
+        <article
+          v-for="product in filteredProducts"
+          :key="product?.id || Math.random()"
+          @click="product?.id && goToDetail(product.id)"
+          class="group flex cursor-pointer flex-col justify-between rounded-2xl border border-slate-300 bg-gradient-to-br from-white to-slate-50 p-3 shadow-sm transition hover:-translate-y-0.5 hover:border-slate-400 hover:shadow-md"
         >
-          <div class="relative mb-2 aspect-square w-full overflow-hidden rounded-lg bg-gray-100">
-            <img :src="product.gambar || 'https://placehold.co/300x300?text=Produk'" :alt="product.nama" class="h-full w-full object-cover" />
-            <span 
+          <div class="relative mb-3 overflow-hidden rounded-2xl bg-slate-300">
+            <img
+              :src="getProductImageUrl(product)"
+              :alt="product?.nama_produk || product?.nama || 'Produk'"
+              class="aspect-square w-full object-cover transition duration-300 group-hover:scale-105"
+            />
+            <span
               :class="[
-                'absolute left-2 top-2 rounded px-1.5 py-0.5 text-[10px] font-bold text-white',
-                product.stok < 10 ? 'bg-red-500' : 'bg-emerald-600'
+                'absolute left-2 top-2 rounded-full px-2 py-1 text-[10px] font-semibold text-white',
+                (product?.stok || 0) < 10 ? 'bg-red-500' : 'bg-slate-500'
               ]"
             >
-              Stok: {{ product.stok }}
+              Stok: {{ product?.stok || 0 }}
             </span>
           </div>
 
-          <div>
-            <span class="text-[10px] font-medium text-gray-400 uppercase">{{ product.kategori }}</span>
-            <h4 class="text-xs sm:text-sm font-semibold text-gray-800 line-clamp-2">{{ product.nama }}</h4>
-            
-            <div class="mt-2 flex items-baseline gap-1">
-              <span class="text-sm sm:text-base font-bold text-emerald-600">
-                Rp {{ Number(product.harga).toLocaleString('id-ID') }}
+          <div class="space-y-2">
+            <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+              {{ getCategoryName(product?.kategori) }}
+            </p>
+            <h4 class="text-sm font-semibold text-slate-800 line-clamp-2">
+              {{ product?.nama_produk || product?.nama || 'Tanpa Nama' }}
+            </h4>
+
+            <div class="flex items-baseline gap-1">
+              <span class="text-base font-bold text-slate-900">
+                Rp {{ Number(product?.harga || 0).toLocaleString('id-ID') }}
               </span>
-              <span class="text-[10px] text-gray-500">/ {{ product.satuan || 'pcs' }}</span>
+              <span class="text-[10px] text-slate-500">/ {{ product?.satuan || 'pcs' }}</span>
             </div>
           </div>
 
-          <button 
-            @click="addToCart(product)"
-            class="mt-3 w-full rounded-lg bg-emerald-600 py-1.5 text-xs font-semibold text-white transition hover:bg-emerald-700 active:scale-95"
+          <button
+            @click="addToCart(product, $event)"
+            class="mt-4 w-full rounded-xl bg-slate-500 px-3 py-2 text-xs font-semibold text-white transition hover:bg-slate-600"
           >
             + Beli
           </button>
-        </div>
+        </article>
       </div>
-      <!-- END KODE -->
     </section>
   </div>
 </template>
