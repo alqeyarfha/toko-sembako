@@ -86,11 +86,27 @@ const getProductImageUrl = (product) => {
   return `${apiBaseUrl}/storage/${normalized.replace(/^\/+/, '')}`
 }
 
+const getCartUniqueCount = () => {
+  try {
+    const cart = JSON.parse(localStorage.getItem('cart') || '[]')
+    const uniqueIds = new Set(
+      (Array.isArray(cart) ? cart : [])
+        .map((item) => item?.product_id || item?.produk_id || item?.id)
+        .filter(Boolean)
+    )
+    return uniqueIds.size
+  } catch (error) {
+    return 0
+  }
+}
+
+const refreshCartCount = () => {
+  cartCount.value = getCartUniqueCount()
+}
+
 const addToCart = (product, event) => {
   event.stopPropagation()
   if (!product) return
-
-  cartCount.value++
 
   const cart = JSON.parse(localStorage.getItem('cart') || '[]')
   const existingItem = cart.find(item => item?.id === product.id)
@@ -100,6 +116,7 @@ const addToCart = (product, event) => {
   } else {
     cart.push({
       id: product.id,
+      product_id: product.id,
       nama: product.nama_produk || product.nama,
       harga: product.harga,
       gambar: getProductImageUrl(product),
@@ -108,11 +125,13 @@ const addToCart = (product, event) => {
   }
 
   localStorage.setItem('cart', JSON.stringify(cart))
+  refreshCartCount()
   alert(`${product.nama_produk || product.nama} berhasil ditambahkan ke keranjang!`)
 }
 
 onMounted(() => {
   fetchProducts()
+  refreshCartCount()
 })
 </script>
 
@@ -160,7 +179,7 @@ onMounted(() => {
           @click="router.push('/keranjang')"
           class="inline-flex items-center gap-2 rounded-lg border border-slate-400 bg-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-800 transition hover:border-slate-500 hover:bg-slate-300"
         >
-          🛒 Keranjang: {{ cartCount }} item
+          🛒 Keranjang: {{ cartCount }} jenis
         </button>
       </div>
 

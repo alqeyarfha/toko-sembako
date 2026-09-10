@@ -20,10 +20,39 @@ const handleLogin = async () => {
       password: password.value
     })
 
-    localStorage.setItem('token', response.data.token)
-    localStorage.setItem('user', JSON.stringify(response.data.user))
+    const token = response.data.token
+    if (token) {
+      localStorage.setItem('token', token)
+    }
 
-    router.push({ name: 'home' })
+    let userObj = response.data.user
+    if (!userObj && token) {
+      try {
+        const profRes = await api.get('/profile')
+        userObj = profRes.data?.data || profRes.data
+      } catch (e) {
+        // Abaikan jika endpoint profile belum siap
+      }
+    }
+
+    const emailLower = (email.value || '').toLowerCase()
+    const isAdminUser = emailLower.includes('admin') || userObj?.role === 'admin' || userObj?.role === 'administrator'
+
+    const finalUser = {
+      ...(userObj || {}),
+      email: email.value,
+      name: userObj?.name || (isAdminUser ? 'Admin Toko Sembako' : email.value.split('@')[0]),
+      role: isAdminUser ? 'admin' : (userObj?.role || 'user')
+    }
+
+    localStorage.setItem('user', JSON.stringify(finalUser))
+    window.dispatchEvent(new CustomEvent('user-updated'))
+
+    if (isAdminUser) {
+      router.push('/dashboard')
+    } else {
+      router.push({ name: 'home' })
+    }
   } catch (error) {
     if (error.response && error.response.data.message) {
       errorMessage.value = error.response.data.message
