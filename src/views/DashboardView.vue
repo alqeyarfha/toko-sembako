@@ -1,294 +1,312 @@
 <template>
-  <div class="space-y-6 mx-auto max-w-6xl">
-    <!-- Header Admin Dashboard -->
-    <div class="rounded-3xl bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 p-6 text-white shadow-md sm:p-8">
+  <div class="space-y-6 mx-auto max-w-6xl text-slate-700 font-sans antialiased">
+    <!-- Header Admin Dashboard (Neutral Medium Gray Theme) -->
+    <div class="rounded-3xl bg-slate-700 p-6 text-white shadow-lg shadow-slate-700/10 sm:p-8 transition-all duration-300 border border-slate-600">
       <div class="flex flex-wrap items-center justify-between gap-4">
         <div>
           <div class="flex items-center gap-2">
-            <span class="rounded-full bg-emerald-500/20 px-3 py-1 text-[11px] font-bold tracking-wider text-emerald-300 uppercase">
-              ● Toko Aktif & Online
+            <span class="inline-flex items-center gap-1.5 rounded-full bg-slate-600 px-3 py-1 text-[11px] font-medium tracking-wide text-slate-200 border border-slate-500/60">
+              <span class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span> Toko Aktif & Online
             </span>
-            <span class="text-xs text-slate-400">
+            <span class="text-xs text-slate-300">
               {{ formattedTodayDate }}
             </span>
           </div>
-          <h2 class="mt-3 text-2xl font-black tracking-tight sm:text-3xl">
-            Selamat Datang, {{ currentAdminName }}! 👋
+          <h2 class="mt-3 text-2xl font-bold tracking-tight text-white sm:text-3xl">
+            Selamat Datang, {{ currentAdminName }}
           </h2>
-          <p class="mt-1 text-xs text-slate-300 sm:text-sm">
+          <p class="mt-1 text-xs text-slate-300 sm:text-sm max-w-2xl font-normal leading-relaxed">
             Berikut adalah ringkasan performa penjualan, status verifikasi pesanan, dan pemantauan stok sembako hari ini.
           </p>
         </div>
 
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2.5">
           <router-link
             to="/admin/transaksi"
-            class="rounded-xl bg-amber-500 hover:bg-amber-600 px-4 py-2.5 text-xs font-bold text-slate-900 shadow-sm transition flex items-center gap-1.5"
+            class="rounded-xl bg-slate-600 hover:bg-slate-500 px-4 py-2.5 text-xs font-semibold text-white border border-slate-500 transition-all duration-200 flex items-center gap-2 shadow-sm hover:shadow"
           >
-            <span>🧾</span> Verifikasi Transaksi
-            <span v-if="countPending > 0" class="rounded-full bg-slate-900 text-white px-1.5 py-0.5 text-[10px]">
+            <span>Verifikasi Transaksi</span>
+            <span v-if="countPending > 0" class="rounded-md bg-slate-800 text-amber-300 px-2 py-0.5 text-[10px] font-bold border border-slate-700">
               {{ countPending }}
             </span>
           </router-link>
           <router-link
             to="/produk"
-            class="rounded-xl bg-slate-700 hover:bg-slate-600 px-4 py-2.5 text-xs font-semibold text-white transition border border-slate-600 flex items-center gap-1.5"
+            class="rounded-xl bg-slate-600 hover:bg-slate-500 px-4 py-2.5 text-xs font-semibold text-slate-100 transition-all duration-200 border border-slate-500 flex items-center gap-1.5 shadow-sm hover:shadow"
           >
-            <span>📦</span> Kelola Produk
+            <span>Kelola Produk</span>
           </router-link>
           <button
             @click="loadAllDashboardData"
-            class="rounded-xl bg-slate-800 hover:bg-slate-700 px-3 py-2.5 text-xs font-semibold text-slate-300 border border-slate-700 transition"
+            class="rounded-xl bg-slate-600 hover:bg-slate-500 p-2.5 text-xs font-semibold text-slate-200 border border-slate-500 transition-all duration-200 hover:text-white"
             title="Muat ulang data"
           >
-            ↻
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
           </button>
         </div>
       </div>
     </div>
 
-    <!-- Alert Notifikasi Cepat -->
+    <!-- Alert Notifikasi Cepat (Soft Gray Accent) -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <!-- Alert Pesanan Butuh Verifikasi -->
       <div
         v-if="countPending > 0"
-        class="rounded-2xl border border-amber-200 bg-amber-50/80 p-4 shadow-sm flex items-center justify-between gap-3"
+        class="rounded-2xl border border-slate-200 bg-white p-4.5 shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-between gap-3"
       >
-        <div class="flex items-center gap-3">
-          <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500 text-white font-black text-lg">
-            !
+        <div class="flex items-center gap-3.5">
+          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-700 font-medium border border-slate-200">
+            <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
           </div>
           <div>
-            <h4 class="text-xs font-bold text-amber-900">{{ countPending }} Pesanan Menunggu Verifikasi</h4>
-            <p class="text-[11px] text-amber-700">Pelanggan telah mengunggah bukti pembayaran yang perlu disetujui.</p>
+            <h4 class="text-xs font-bold text-slate-800">{{ countPending }} Pesanan Menunggu Verifikasi</h4>
+            <p class="text-[11px] text-slate-500 mt-0.5">Pelanggan telah mengunggah bukti pembayaran yang perlu disetujui.</p>
           </div>
         </div>
         <router-link
           to="/admin/transaksi"
-          class="rounded-xl bg-amber-600 hover:bg-amber-700 px-3 py-1.5 text-xs font-bold text-white transition whitespace-nowrap shadow-sm"
+          class="rounded-xl bg-slate-700 hover:bg-slate-800 px-3.5 py-2 text-xs font-semibold text-white transition-all duration-200 whitespace-nowrap shadow-sm hover:shadow"
         >
-          Verifikasi Sekarang →
+          Verifikasi →
         </router-link>
       </div>
 
       <div
         v-else
-        class="rounded-2xl border border-emerald-200 bg-emerald-50/70 p-4 shadow-sm flex items-center gap-3"
+        class="rounded-2xl border border-slate-200 bg-white p-4.5 shadow-sm flex items-center gap-3.5"
       >
-        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-600 text-white font-black text-lg">
-          ✓
+        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-600 border border-slate-200">
+          <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
         </div>
         <div>
-          <h4 class="text-xs font-bold text-emerald-900">Semua Pesanan Terverifikasi</h4>
-          <p class="text-[11px] text-emerald-700">Tidak ada transaksi yang tertunda atau pending saat ini.</p>
+          <h4 class="text-xs font-bold text-slate-800">Semua Pesanan Terverifikasi</h4>
+          <p class="text-[11px] text-slate-500 mt-0.5">Tidak ada transaksi yang tertunda saat ini.</p>
         </div>
       </div>
 
       <!-- Alert Produk Stok Menipis -->
       <div
         v-if="lowStockProducts.length > 0"
-        class="rounded-2xl border border-rose-200 bg-rose-50/80 p-4 shadow-sm flex items-center justify-between gap-3"
+        class="rounded-2xl border border-slate-200 bg-white p-4.5 shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-between gap-3"
       >
-        <div class="flex items-center gap-3">
-          <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-500 text-white font-black text-lg">
-            📦
+        <div class="flex items-center gap-3.5">
+          <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-700 border border-slate-200">
+            <svg class="w-5 h-5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
           </div>
           <div>
-            <h4 class="text-xs font-bold text-rose-900">{{ lowStockProducts.length }} Produk Sembako Stok Menipis</h4>
-            <p class="text-[11px] text-rose-700">Sisa stok kurang dari 10 unit. Perlu segera di-restock.</p>
+            <h4 class="text-xs font-bold text-slate-800">{{ lowStockProducts.length }} Produk Sembako Stok Menipis</h4>
+            <p class="text-[11px] text-slate-500 mt-0.5">Sisa stok kurang dari 10 unit. Perlu segera di-restock.</p>
           </div>
         </div>
         <router-link
           to="/produk"
-          class="rounded-xl bg-rose-600 hover:bg-rose-700 px-3 py-1.5 text-xs font-bold text-white transition whitespace-nowrap shadow-sm"
+          class="rounded-xl bg-slate-700 hover:bg-slate-800 px-3.5 py-2 text-xs font-semibold text-white transition-all duration-200 whitespace-nowrap shadow-sm hover:shadow"
         >
-          Restok Produk →
+          Restok →
         </router-link>
       </div>
 
       <div
         v-else
-        class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm flex items-center gap-3"
+        class="rounded-2xl border border-slate-200 bg-white p-4.5 shadow-sm flex items-center gap-3.5"
       >
-        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 text-slate-700 font-bold text-lg">
-          ✅
+        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-600 border border-slate-200">
+          <svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         </div>
         <div>
           <h4 class="text-xs font-bold text-slate-800">Stok Sembako Terkendali</h4>
-          <p class="text-[11px] text-slate-500">Seluruh stok produk sembako masih dalam batas aman.</p>
+          <p class="text-[11px] text-slate-500 mt-0.5">Seluruh stok produk sembako masih dalam batas aman.</p>
         </div>
       </div>
     </div>
 
-    <div v-if="loading" class="py-14 text-center text-slate-500 font-medium">
+    <div v-if="loading" class="py-20 text-center text-slate-400 text-sm font-medium animate-pulse">
       Memuat ringkasan dashboard...
     </div>
 
     <div v-else class="space-y-6">
-      <!-- 5 Kartu KPI Indikator Utama -->
+      <!-- 5 Kartu KPI Indikator Utama (Neutral Soft Gray) -->
       <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
         <!-- Total Pendapatan -->
-        <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm space-y-1">
-          <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Total Pendapatan</span>
-          <div class="text-xl font-black text-slate-900">Rp {{ totalPendapatan.toLocaleString('id-ID') }}</div>
-          <span class="inline-block text-[10px] text-emerald-600 font-semibold">Total pesanan valid</span>
+        <div class="rounded-2xl border border-slate-200/80 bg-white p-4.5 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col justify-between">
+          <span class="text-[11px] font-medium tracking-wide text-slate-500">Total Pendapatan</span>
+          <div class="my-2">
+            <div class="text-xl font-extrabold tracking-tight text-slate-800">Rp {{ totalPendapatan.toLocaleString('id-ID') }}</div>
+          </div>
+          <span class="text-[10px] text-slate-400 font-medium">Total pesanan valid</span>
         </div>
 
         <!-- Butuh Verifikasi -->
-        <div class="rounded-2xl border border-amber-200 bg-amber-50/50 p-4 shadow-sm space-y-1">
-          <span class="text-[10px] font-bold uppercase tracking-wider text-amber-700">Butuh Verifikasi</span>
-          <div class="text-xl font-black text-amber-800 flex items-center gap-2">
-            <span>{{ countPending }} Pesanan</span>
-            <span v-if="countPending > 0" class="inline-block h-2 w-2 rounded-full bg-amber-500 animate-ping"></span>
+        <div class="rounded-2xl border border-slate-200/80 bg-white p-4.5 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col justify-between">
+          <span class="text-[11px] font-medium tracking-wide text-slate-500">Butuh Verifikasi</span>
+          <div class="my-2 flex items-center gap-2">
+            <span class="text-xl font-extrabold tracking-tight text-slate-800">{{ countPending }}</span>
+            <span class="text-xs font-medium text-slate-500">Pesanan</span>
+            <span v-if="countPending > 0" class="h-2 w-2 rounded-full bg-amber-500 animate-pulse ml-auto"></span>
           </div>
-          <router-link to="/admin/transaksi" class="text-[10px] font-bold text-amber-700 hover:underline">
+          <router-link to="/admin/transaksi" class="text-[10px] font-semibold text-slate-600 hover:text-slate-800 transition-colors">
             Cek verifikasi →
           </router-link>
         </div>
 
         <!-- Transaksi Selesai -->
-        <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm space-y-1">
-          <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Terverifikasi / Selesai</span>
-          <div class="text-xl font-black text-emerald-700">{{ countCompletedOrVerified }} Pesanan</div>
-          <span class="text-[10px] text-slate-400">Transaksi berhasil</span>
+        <div class="rounded-2xl border border-slate-200/80 bg-white p-4.5 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col justify-between">
+          <span class="text-[11px] font-medium tracking-wide text-slate-500">Terverifikasi / Selesai</span>
+          <div class="my-2 flex items-baseline gap-1">
+            <span class="text-xl font-extrabold tracking-tight text-slate-800">{{ countCompletedOrVerified }}</span>
+            <span class="text-xs text-slate-500">Pesanan</span>
+          </div>
+          <span class="text-[10px] text-slate-400 font-medium">Transaksi berhasil</span>
         </div>
 
         <!-- Total Produk -->
-        <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm space-y-1">
-          <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Produk Sembako</span>
-          <div class="text-xl font-black text-slate-900">{{ totalProductsCount }} Items</div>
-          <router-link to="/produk" class="text-[10px] font-semibold text-slate-500 hover:underline">
+        <div class="rounded-2xl border border-slate-200/80 bg-white p-4.5 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col justify-between">
+          <span class="text-[11px] font-medium tracking-wide text-slate-500">Produk Sembako</span>
+          <div class="my-2 flex items-baseline gap-1">
+            <span class="text-xl font-extrabold tracking-tight text-slate-800">{{ totalProductsCount }}</span>
+            <span class="text-xs text-slate-500">Items</span>
+          </div>
+          <router-link to="/produk" class="text-[10px] font-semibold text-slate-600 hover:text-slate-800 transition-colors">
             Kelola stok →
           </router-link>
         </div>
 
         <!-- Total Pelanggan -->
-        <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm space-y-1">
-          <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Pelanggan Aktif</span>
-          <div class="text-xl font-black text-slate-900">{{ totalCustomerCount }} User</div>
-          <span class="text-[10px] text-slate-400">Toko Sembako</span>
+        <div class="rounded-2xl border border-slate-200/80 bg-white p-4.5 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col justify-between">
+          <span class="text-[11px] font-medium tracking-wide text-slate-500">Pelanggan Aktif</span>
+          <div class="my-2 flex items-baseline gap-1">
+            <span class="text-xl font-extrabold tracking-tight text-slate-800">{{ totalCustomerCount }}</span>
+            <span class="text-xs text-slate-500">User</span>
+          </div>
+          <span class="text-[10px] text-slate-400 font-medium">Toko Sembako</span>
         </div>
       </div>
 
-      <!-- Analisis Penjualan & Tren Grafik Mini -->
+      <!-- Analisis Penjualan & Grafik -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
         <!-- Penjualan Hari ini vs Kemarin -->
-        <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-4">
+        <div class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm space-y-4">
           <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-            <h3 class="font-bold text-slate-800 text-sm">Tren Penjualan Harian</h3>
-            <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Perbandingan</span>
+            <h3 class="font-bold text-slate-700 text-xs uppercase tracking-wider">Tren Penjualan Harian</h3>
+            <span class="text-[10px] font-medium text-slate-400">Perbandingan</span>
           </div>
 
           <div class="grid grid-cols-2 gap-3">
-            <div class="rounded-xl bg-slate-50 p-3">
-              <span class="text-[10px] font-medium text-slate-500">Hari Ini</span>
-              <p class="text-base font-bold text-slate-900 mt-1">Rp {{ todayTotal.toLocaleString('id-ID') }}</p>
-              <p class="text-[10px] text-slate-400">{{ todayOrders }} pesanan</p>
+            <div class="rounded-xl bg-slate-50 p-3.5 border border-slate-100">
+              <span class="text-[11px] font-medium text-slate-500">Hari Ini</span>
+              <p class="text-base font-bold text-slate-800 mt-1">Rp {{ todayTotal.toLocaleString('id-ID') }}</p>
+              <p class="text-[10px] text-slate-400 mt-0.5">{{ todayOrders }} pesanan</p>
             </div>
-            <div class="rounded-xl bg-slate-50 p-3">
-              <span class="text-[10px] font-medium text-slate-500">Kemarin</span>
-              <p class="text-base font-bold text-slate-900 mt-1">Rp {{ yesterdayTotal.toLocaleString('id-ID') }}</p>
-              <p class="text-[10px] text-slate-400">{{ yesterdayOrders }} pesanan</p>
+            <div class="rounded-xl bg-slate-50 p-3.5 border border-slate-100">
+              <span class="text-[11px] font-medium text-slate-500">Kemarin</span>
+              <p class="text-base font-bold text-slate-800 mt-1">Rp {{ yesterdayTotal.toLocaleString('id-ID') }}</p>
+              <p class="text-[10px] text-slate-400 mt-0.5">{{ yesterdayOrders }} pesanan</p>
             </div>
           </div>
 
           <div class="flex items-center justify-between pt-1">
             <div>
-              <span class="text-xs text-slate-500">Perubahan Performa:</span>
-              <div class="text-lg font-black" :class="changeClass">
+              <span class="text-[11px] text-slate-500">Perubahan Performa:</span>
+              <div class="text-base font-bold" :class="changePercent >= 0 ? 'text-slate-700' : 'text-slate-500'">
                 {{ changePercent > 0 ? '+' : '' }}{{ changePercent }}%
               </div>
             </div>
-            <!-- Sparkline 7 hari -->
+            <!-- Sparkline 7 hari (Warna Grey Slate) -->
             <div class="w-32 h-10">
               <svg viewBox="0 0 100 30" preserveAspectRatio="none" class="w-full h-full">
-                <polyline :points="sparklinePoints" fill="none" stroke="#059669" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                <polyline :points="sparklinePoints" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
               </svg>
             </div>
           </div>
         </div>
 
         <!-- Metode Pembayaran Breakdown -->
-        <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-4">
+        <div class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm space-y-4">
           <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-            <h3 class="font-bold text-slate-800 text-sm">Metode Pembayaran</h3>
-            <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Statistik</span>
+            <h3 class="font-bold text-slate-700 text-xs uppercase tracking-wider">Metode Pembayaran</h3>
+            <span class="text-[10px] font-medium text-slate-400">Statistik</span>
           </div>
 
-          <div class="space-y-3 pt-1">
+          <div class="space-y-4 pt-1">
             <!-- Transfer Bank -->
             <div>
-              <div class="flex justify-between text-xs font-semibold text-slate-700 mb-1">
+              <div class="flex justify-between text-xs font-semibold text-slate-700 mb-1.5">
                 <span>Transfer Bank / QRIS</span>
-                <span>{{ transferCount }} pesanan ({{ transferPercent }}%)</span>
+                <span class="text-slate-500">{{ transferCount }} ({{ transferPercent }}%)</span>
               </div>
               <div class="h-2 w-full rounded-full bg-slate-100 overflow-hidden">
-                <div class="h-full bg-blue-600 rounded-full" :style="{ width: `${transferPercent}%` }"></div>
+                <div class="h-full bg-slate-600 rounded-full transition-all duration-500" :style="{ width: `${transferPercent}%` }"></div>
               </div>
             </div>
 
             <!-- COD -->
             <div>
-              <div class="flex justify-between text-xs font-semibold text-slate-700 mb-1">
+              <div class="flex justify-between text-xs font-semibold text-slate-700 mb-1.5">
                 <span>Bayar di Tempat (COD)</span>
-                <span>{{ codCount }} pesanan ({{ codPercent }}%)</span>
+                <span class="text-slate-500">{{ codCount }} ({{ codPercent }}%)</span>
               </div>
               <div class="h-2 w-full rounded-full bg-slate-100 overflow-hidden">
-                <div class="h-full bg-emerald-500 rounded-full" :style="{ width: `${codPercent}%` }"></div>
+                <div class="h-full bg-slate-400 rounded-full transition-all duration-500" :style="{ width: `${codPercent}%` }"></div>
               </div>
             </div>
           </div>
 
-          <p class="text-[11px] text-slate-400 pt-2 border-t border-slate-100">
-            Sebagian besar pembeli memilih transfer bank & QRIS yang membutuhkan verifikasi bukti pembayaran.
+          <p class="text-[11px] text-slate-400 pt-2 border-t border-slate-100 leading-relaxed">
+            Pembayaran transfer & QRIS memerlukan verifikasi manual bukti transaksi.
           </p>
         </div>
 
         <!-- Shortcut Cepat Admin -->
-        <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-3">
+        <div class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm space-y-3">
           <div class="border-b border-slate-100 pb-3">
-            <h3 class="font-bold text-slate-800 text-sm">Akses Cepat Pengelolaan</h3>
+            <h3 class="font-bold text-slate-700 text-xs uppercase tracking-wider">Akses Cepat</h3>
             <p class="text-[11px] text-slate-400">Navigasi langsung ke menu kerja admin</p>
           </div>
 
           <div class="space-y-2">
             <router-link
               to="/admin/transaksi"
-              class="flex items-center justify-between rounded-xl border border-slate-200 p-3 hover:bg-slate-50 hover:border-slate-300 transition"
+              class="flex items-center justify-between rounded-xl border border-slate-100 p-3 hover:bg-slate-50 transition-all duration-200"
             >
-              <div class="flex items-center gap-2.5">
-                <span class="text-lg">🧾</span>
+              <div class="flex items-center gap-3">
+                <div class="p-2 rounded-lg bg-slate-100 text-slate-600">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                </div>
                 <div class="text-left">
                   <p class="text-xs font-bold text-slate-800">Verifikasi Transaksi</p>
-                  <p class="text-[10px] text-slate-500">Cek foto struk & setujui pesanan</p>
+                  <p class="text-[10px] text-slate-400">Setujui bukti pembayaran</p>
                 </div>
               </div>
-              <span class="text-xs font-bold text-amber-600">{{ countPending }} pending</span>
+              <span class="text-xs font-semibold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md">{{ countPending }} pending</span>
             </router-link>
 
             <router-link
               to="/produk"
-              class="flex items-center justify-between rounded-xl border border-slate-200 p-3 hover:bg-slate-50 hover:border-slate-300 transition"
+              class="flex items-center justify-between rounded-xl border border-slate-100 p-3 hover:bg-slate-50 transition-all duration-200"
             >
-              <div class="flex items-center gap-2.5">
-                <span class="text-lg">📦</span>
+              <div class="flex items-center gap-3">
+                <div class="p-2 rounded-lg bg-slate-100 text-slate-600">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                </div>
                 <div class="text-left">
-                  <p class="text-xs font-bold text-slate-800">Manajemen Stok Produk</p>
-                  <p class="text-[10px] text-slate-500">Tambah sembako, ubah harga & stok</p>
+                  <p class="text-xs font-bold text-slate-800">Manajemen Stok</p>
+                  <p class="text-[10px] text-slate-400">Kelola katalog & stok</p>
                 </div>
               </div>
-              <span class="text-xs font-bold text-slate-500">{{ totalProductsCount }} produk</span>
+              <span class="text-xs font-medium text-slate-400">{{ totalProductsCount }} produk</span>
             </router-link>
 
             <router-link
               to="/"
-              class="flex items-center justify-between rounded-xl border border-slate-200 p-3 hover:bg-slate-50 hover:border-slate-300 transition"
+              class="flex items-center justify-between rounded-xl border border-slate-100 p-3 hover:bg-slate-50 transition-all duration-200"
             >
-              <div class="flex items-center gap-2.5">
-                <span class="text-lg">🏪</span>
+              <div class="flex items-center gap-3">
+                <div class="p-2 rounded-lg bg-slate-100 text-slate-600">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                </div>
                 <div class="text-left">
                   <p class="text-xs font-bold text-slate-800">Katalog Toko Depan</p>
-                  <p class="text-[10px] text-slate-500">Lihat tampilan etalase sebagai pembeli</p>
+                  <p class="text-[10px] text-slate-400">Tampilan etalase pembeli</p>
                 </div>
               </div>
               <span class="text-xs text-slate-400">Kunjungi →</span>
@@ -297,82 +315,82 @@
         </div>
       </div>
 
-      <!-- 2 Kolom Bawah: Transaksi Terbaru & Pemantauan Stok Rendah -->
+      <!-- 2 Kolom Bawah: Transaksi Terbaru & Pemantauan Stok -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
         <!-- 5 Pesanan Masuk Terbaru -->
-        <div class="lg:col-span-2 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-4">
+        <div class="lg:col-span-2 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm space-y-4">
           <div class="flex items-center justify-between border-b border-slate-100 pb-3">
             <div>
-              <h3 class="font-bold text-slate-800 text-sm">5 Transaksi Terbaru</h3>
+              <h3 class="font-bold text-slate-700 text-xs uppercase tracking-wider">5 Transaksi Terbaru</h3>
               <p class="text-[11px] text-slate-400">Pesanan terbaru yang masuk ke sistem toko</p>
             </div>
             <router-link
               to="/admin/transaksi"
-              class="text-xs font-bold text-slate-800 hover:text-blue-600 hover:underline flex items-center gap-1"
+              class="text-xs font-medium text-slate-600 hover:text-slate-800 transition-colors"
             >
-              <span>Buka Semua Transaksi</span>
-              <span>→</span>
+              Buka Semua →
             </router-link>
           </div>
 
-          <div v-if="latestFiveOrders.length === 0" class="py-8 text-center text-xs text-slate-400">
+          <div v-if="latestFiveOrders.length === 0" class="py-10 text-center text-xs text-slate-400 font-medium">
             Belum ada data transaksi masuk.
           </div>
 
           <div v-else class="overflow-x-auto">
             <table class="w-full text-left text-xs">
-              <thead class="bg-slate-50 text-slate-500 uppercase border-b border-slate-100 text-[10px] font-bold">
+              <thead class="bg-slate-50/80 text-slate-400 border-b border-slate-100 text-[10px] uppercase font-semibold tracking-wider">
                 <tr>
-                  <th class="p-2.5">ID Order</th>
-                  <th class="p-2.5">Pembeli</th>
-                  <th class="p-2.5">Total Tagihan</th>
-                  <th class="p-2.5 text-center">Bukti Bayar</th>
-                  <th class="p-2.5 text-center">Status</th>
-                  <th class="p-2.5 text-center">Aksi Cepat</th>
+                  <th class="py-3 px-3">ID Order</th>
+                  <th class="py-3 px-3">Pembeli</th>
+                  <th class="py-3 px-3">Total Tagihan</th>
+                  <th class="py-3 px-3 text-center">Bukti Bayar</th>
+                  <th class="py-3 px-3 text-center">Status</th>
+                  <th class="py-3 px-3 text-right">Aksi</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-100 text-slate-700">
-                <tr v-for="order in latestFiveOrders" :key="order.id" class="hover:bg-slate-50">
-                  <td class="p-2.5 font-bold text-slate-900">#{{ order.id }}</td>
-                  <td class="p-2.5">
-                    <p class="font-semibold text-slate-800">{{ getCustomerName(order) }}</p>
+                <tr v-for="order in latestFiveOrders" :key="order.id" class="hover:bg-slate-50/60 transition-colors">
+                  <td class="py-3 px-3 font-semibold text-slate-800">#{{ order.id }}</td>
+                  <td class="py-3 px-3">
+                    <p class="font-medium text-slate-800">{{ getCustomerName(order) }}</p>
                     <p class="text-[10px] text-slate-400">{{ order.created_at ? new Date(order.created_at).toLocaleDateString('id-ID') : '-' }}</p>
                   </td>
-                  <td class="p-2.5 font-bold text-slate-900">
+                  <td class="py-3 px-3 font-semibold text-slate-800">
                     Rp {{ Number(order.total_harga || order.total || 0).toLocaleString('id-ID') }}
                   </td>
-                  <td class="p-2.5 text-center">
+                  <td class="py-3 px-3 text-center">
                     <button
                       v-if="order.bukti_transaksi"
                       type="button"
                       @click="openProofModal(order.bukti_transaksi, order.id)"
-                      class="text-[10px] font-semibold text-blue-600 hover:underline"
+                      class="inline-flex items-center gap-1 text-[11px] font-medium text-slate-600 hover:text-slate-800 bg-slate-100 px-2 py-0.5 rounded transition-colors"
                     >
-                      👁️ Ada Bukti
+                      <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                      Ada Bukti
                     </button>
                     <span v-else class="text-[10px] text-slate-400 italic">-</span>
                   </td>
-                  <td class="p-2.5 text-center">
-                    <span :class="['rounded-full px-2 py-0.5 text-[10px] font-bold uppercase', getStatusClass(order.status)]">
+                  <td class="py-3 px-3 text-center">
+                    <span :class="['inline-block rounded-md px-2 py-0.5 text-[10px] font-semibold border', getStatusClass(order.status)]">
                       {{ order.status || 'Pending' }}
                     </span>
                   </td>
-                  <td class="p-2.5 text-center">
+                  <td class="py-3 px-3 text-right">
                     <button
                       v-if="order.status === 'pending'"
                       type="button"
                       @click="quickVerify(order.id)"
-                      class="rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 text-[11px] font-semibold transition shadow-sm"
+                      class="rounded-lg bg-slate-700 hover:bg-slate-800 text-white px-2.5 py-1 text-[11px] font-medium transition-all shadow-sm"
                       title="Setujui dan Verifikasi"
                     >
-                      ✓ Verifikasi
+                      Verifikasi
                     </button>
                     <router-link
                       v-else
                       to="/admin/transaksi"
-                      class="text-[11px] font-semibold text-slate-600 hover:underline"
+                      class="text-[11px] font-medium text-slate-500 hover:text-slate-800 transition-colors"
                     >
-                      Lihat →
+                      Detail →
                     </router-link>
                   </td>
                 </tr>
@@ -382,33 +400,33 @@
         </div>
 
         <!-- Pemantauan Stok Sembako Menipis -->
-        <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-4">
+        <div class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm space-y-4">
           <div class="flex items-center justify-between border-b border-slate-100 pb-3">
             <div>
-              <h3 class="font-bold text-slate-800 text-sm">Stok Sembako Menipis</h3>
+              <h3 class="font-bold text-slate-700 text-xs uppercase tracking-wider">Stok Menipis</h3>
               <p class="text-[11px] text-slate-400">Produk dengan stok &lt; 10 unit</p>
             </div>
-            <router-link to="/produk" class="text-xs font-bold text-slate-800 hover:underline">
+            <router-link to="/produk" class="text-xs font-medium text-slate-600 hover:text-slate-800 transition-colors">
               Kelola →
             </router-link>
           </div>
 
-          <div v-if="lowStockProducts.length === 0" class="py-6 text-center text-xs text-slate-400">
-            Seluruh stok produk masih cukup banyak.
+          <div v-if="lowStockProducts.length === 0" class="py-8 text-center text-xs text-slate-400 font-medium">
+            Seluruh stok produk masih mencukupi.
           </div>
 
-          <div v-else class="space-y-2.5 max-h-72 overflow-y-auto pr-1">
+          <div v-else class="space-y-2 max-h-72 overflow-y-auto pr-1">
             <div
               v-for="item in lowStockProducts.slice(0, 6)"
               :key="item.id"
-              class="flex items-center justify-between p-2.5 rounded-xl border border-rose-100 bg-rose-50/50 text-xs"
+              class="flex items-center justify-between p-3 rounded-xl border border-slate-100 bg-slate-50/50 hover:bg-slate-50 transition-colors text-xs"
             >
               <div>
-                <p class="font-bold text-slate-800">{{ item.nama_produk || item.nama }}</p>
-                <p class="text-[10px] text-slate-500">Rp {{ Number(item.harga || 0).toLocaleString('id-ID') }}</p>
+                <p class="font-semibold text-slate-800">{{ item.nama_produk || item.nama }}</p>
+                <p class="text-[10px] text-slate-400 mt-0.5">Rp {{ Number(item.harga || 0).toLocaleString('id-ID') }}</p>
               </div>
               <div class="text-right">
-                <span class="rounded-full bg-rose-600 text-white px-2 py-0.5 text-[10px] font-black">
+                <span class="rounded-md bg-slate-200 text-slate-700 px-2 py-0.5 text-[10px] font-bold">
                   Sisa: {{ item.stok || 0 }} {{ item.satuan || 'unit' }}
                 </span>
               </div>
@@ -421,29 +439,29 @@
     <!-- MODAL PREVIEW BUKTI PEMBAYARAN -->
     <div
       v-if="proofModalOpen"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/75 p-4 backdrop-blur-sm"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-slate-700/40 p-4 backdrop-blur-sm transition-opacity"
       @click.self="proofModalOpen = false"
     >
-      <div class="w-full max-w-lg rounded-2xl bg-white p-5 shadow-2xl space-y-4">
+      <div class="w-full max-w-lg rounded-3xl bg-white p-6 shadow-2xl space-y-4 border border-slate-100">
         <div class="flex items-center justify-between border-b border-slate-100 pb-3">
           <h3 class="font-bold text-slate-800 text-sm">Bukti Pembayaran Pesanan #{{ selectedProofOrderId }}</h3>
           <button
             @click="proofModalOpen = false"
-            class="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700 text-sm font-bold"
+            class="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700 text-sm font-bold transition-colors"
           >
             ✕
           </button>
         </div>
 
-        <div class="max-h-[65vh] overflow-auto rounded-xl bg-slate-100 p-2 flex items-center justify-center">
-          <img :src="selectedProofUrl" alt="Bukti Transfer" class="max-h-[60vh] w-auto max-w-full rounded-lg object-contain shadow-sm" />
+        <div class="max-h-[60vh] overflow-auto rounded-2xl bg-slate-50 p-2 flex items-center justify-center border border-slate-100">
+          <img :src="selectedProofUrl" alt="Bukti Transfer" class="max-h-[55vh] w-auto max-w-full rounded-xl object-contain shadow-sm" />
         </div>
 
-        <div class="flex justify-end">
+        <div class="flex justify-end pt-2">
           <button
             type="button"
             @click="proofModalOpen = false"
-            class="rounded-xl bg-slate-800 px-5 py-2 text-xs font-semibold text-white hover:bg-slate-900 transition"
+            class="rounded-xl bg-slate-700 px-5 py-2 text-xs font-semibold text-white hover:bg-slate-800 transition-colors shadow-sm"
           >
             Tutup
           </button>
@@ -557,10 +575,8 @@ const transferPercent = computed(() => {
 
 const codPercent = computed(() => {
   const total = allOrders.value.length
-  return total > 0 ? Math.round((codCount.value / total) * 100) : 0
+  return total > 0 ? Math.round((codPercent.value / total) * 100) : 0
 })
-
-const changeClass = computed(() => (changePercent.value >= 0 ? 'text-emerald-600' : 'text-rose-600'))
 
 const getCustomerName = (order) => {
   return order.nama_penerima || order.pelanggan?.nama || order.user?.name || 'Pelanggan'
@@ -568,11 +584,11 @@ const getCustomerName = (order) => {
 
 const getStatusClass = (status) => {
   const s = String(status || '').toLowerCase()
-  if (s === 'pending') return 'bg-amber-100 text-amber-800'
-  if (s === 'terverifikasi') return 'bg-emerald-100 text-emerald-800'
-  if (s === 'selesai') return 'bg-slate-100 text-slate-800'
-  if (s === 'ditolak') return 'bg-rose-100 text-rose-800'
-  return 'bg-slate-100 text-slate-700'
+  if (s === 'pending') return 'bg-slate-100 text-slate-700 border-slate-200'
+  if (s === 'terverifikasi') return 'bg-slate-700 text-slate-100 border-slate-600'
+  if (s === 'selesai') return 'bg-slate-200 text-slate-800 border-slate-300'
+  if (s === 'ditolak') return 'bg-slate-50 text-slate-400 border-slate-200'
+  return 'bg-slate-100 text-slate-700 border-slate-200'
 }
 
 const openProofModal = (proofUrl, orderId) => {
@@ -675,22 +691,17 @@ const sparklinePoints = computed(() => {
 const loadAllDashboardData = async () => {
   loading.value = true
   try {
-    // 1. Ambil pesanan (lokal + remote)
     const orders = await fetchOrders(true)
     allOrders.value = Array.isArray(orders) && orders.length > 0 ? orders : []
     computeTrends()
 
-    // 2. Ambil ringkasan dashboard backend jika tersedia
     try {
       const dashRes = await api.get('/dashboard')
       if (dashRes?.data) {
         backendSummary.value = dashRes.data.data || dashRes.data
       }
-    } catch (e) {
-      // Abaikan jika endpoint dashboard belum siap
-    }
+    } catch (e) {}
 
-    // 3. Ambil data produk
     try {
       let prodRes
       try {

@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import ProdukView from '../views/ProdukView.vue'
 import LoginView from '../views/LoginView.vue'
+import RegisterView from '../views/RegisterView.vue'
 import DetailProdukView from '../views/DetailProdukView.vue'
 import KeranjangView from '../views/KeranjangView.vue'
 import CheckoutView from '../views/CheckoutView.vue'
@@ -15,6 +16,7 @@ const routes = [
   { path: '/produk', name: 'produk', component: ProdukView, meta: { requiresAdmin: true } },
   { path: '/produk/:id', name: 'detail-produk', component: DetailProdukView },
   { path: '/login', name: 'login', component: LoginView },
+  { path: '/register', name: 'register', component: RegisterView },
   { path: '/keranjang', name: 'keranjang', component: KeranjangView },
   { path: '/checkout', name: 'checkout', component: CheckoutView },
   { path: '/riwayat', name: 'riwayat', component: RiwayatView },
