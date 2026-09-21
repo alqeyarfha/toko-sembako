@@ -133,7 +133,7 @@ onMounted(() => {
       <!-- Informasi Produk -->
       <div class="flex flex-col justify-between">
         <div class="space-y-4">
-          <span class="inline-block bg-slate-200 text-slate-800 text-xs px-2.5 py-1 rounded-md font-bold uppercase tracking-wide">
+          <span class="inline-block bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs px-3 py-1 rounded-full font-semibold tracking-wide">
             {{ getCategoryName(product.kategori) }}
           </span>
 
@@ -142,7 +142,7 @@ onMounted(() => {
           </h1>
 
           <div class="flex items-baseline gap-2">
-            <span class="text-3xl font-black text-slate-600">
+            <span class="text-3xl font-extrabold text-emerald-700">
               Rp {{ Number(product.harga || 0).toLocaleString('id-ID') }}
             </span>
             <span class="text-sm text-slate-400">/ {{ product.satuan || 'pcs' }}</span>
@@ -159,7 +159,7 @@ onMounted(() => {
 
           <div class="flex items-center gap-4 text-sm text-slate-600">
             <span class="font-semibold">Stok Tersedia:</span>
-            <span :class="product.stok > 0 ? 'text-slate-600 font-bold' : 'text-red-500 font-bold'">
+            <span :class="product.stok > 0 ? 'text-emerald-600 font-bold' : 'text-red-500 font-bold'">
               {{ product.stok }} {{ product.satuan || 'pcs' }}
             </span>
           </div>
@@ -189,7 +189,7 @@ onMounted(() => {
           <button 
             @click="addToCart"
             :disabled="product.stok <= 0"
-            class="w-full bg-slate-500 hover:bg-slate-600 disabled:bg-slate-300 text-white font-bold py-3 px-6 rounded-xl transition shadow-md active:scale-95"
+            class="w-full bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-300 text-white font-semibold py-3 px-6 rounded-xl transition shadow-sm active:scale-95"
           >
             {{ product.stok > 0 ? '+ Tambah ke Keranjang' : 'Stok Habis' }}
           </button>

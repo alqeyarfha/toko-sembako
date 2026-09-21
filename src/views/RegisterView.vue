@@ -122,12 +122,16 @@ const handleRegister = async () => {
 
 <template>
   <div class="page-container">
+    <!-- Background decorative blobs -->
+    <div class="bg-blob-1"></div>
+    <div class="bg-blob-2"></div>
+
     <div class="register-card">
 
       <!-- Header -->
       <div class="card-header">
         <div class="logo-box">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7"/>
             <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
             <path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/>
@@ -283,7 +287,7 @@ const handleRegister = async () => {
               </svg>
             </button>
           </div>
-          <p v-if="passwordMatch === false" class="hint-err">Kata sandi tidak cocok</p>
+          <p v-if="passwordMatch === false" class="hint-err">✕ Kata sandi tidak cocok</p>
           <p v-if="passwordMatch === true" class="hint-ok">✓ Kata sandi cocok</p>
         </div>
 
@@ -308,49 +312,61 @@ const handleRegister = async () => {
 </template>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 .page-container {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #f8fafc;
+  background-color: #ffffff;
   padding: 1.5rem;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Inter', system-ui, sans-serif;
+  position: relative;
+  overflow: hidden;
+}
+
+.bg-blob-1,
+.bg-blob-2 {
+  display: none;
 }
 
 .register-card {
   width: 100%;
   max-width: 420px;
   background: #ffffff;
-  border-radius: 16px;
+  border-radius: 24px;
   border: 1px solid #e2e8f0;
-  padding: 2.5rem 2rem;
-  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+  padding: 2.25rem 2rem;
+  box-shadow: 0 20px 45px -15px rgba(0, 0, 0, 0.08), 0 0 1px 1px rgba(0, 0, 0, 0.02);
+  position: relative;
+  z-index: 1;
 }
 
 .card-header {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1.75rem;
 }
 
 .logo-box {
-  width: 48px;
-  height: 48px;
-  background: #f1f5f9;
-  color: #0f172a;
-  border-radius: 12px;
+  width: 56px;
+  height: 56px;
+  background: #059669;
+  color: #ffffff;
+  border-radius: 16px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 1rem;
+  box-shadow: 0 4px 14px rgba(5, 150, 105, 0.25);
 }
 
 .title {
   font-size: 1.25rem;
-  font-weight: 600;
+  font-weight: 700;
   color: #0f172a;
   margin: 0 0 0.25rem 0;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
 }
 
 .subtitle {
@@ -364,20 +380,20 @@ const handleRegister = async () => {
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1rem;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 0.85rem;
   margin-bottom: 1.5rem;
 }
 
 .alert-error {
   background: #fef2f2;
-  border: 1px solid #fee2e2;
+  border: 1px solid #fecaca;
   color: #991b1b;
 }
 
 .alert-success {
   background: #f0fdf4;
-  border: 1px solid #dcfce7;
+  border: 1px solid #bbf7d0;
   color: #166534;
 }
 
@@ -399,8 +415,8 @@ const handleRegister = async () => {
 
 .label {
   font-size: 0.8125rem;
-  font-weight: 500;
-  color: #334155;
+  font-weight: 600;
+  color: #374151;
 }
 
 .label-with-badge {
@@ -413,6 +429,9 @@ const handleRegister = async () => {
   font-size: 0.7rem;
   color: #94a3b8;
   font-weight: 400;
+  background: #f1f5f9;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
 }
 
 .input-wrapper {
@@ -424,37 +443,41 @@ const handleRegister = async () => {
 .field-icon {
   position: absolute;
   left: 0.875rem;
-  color: #94a3b8;
+  color: #9ca3af;
   pointer-events: none;
 }
 
 .input-field {
   width: 100%;
-  padding: 0.625rem 0.875rem 0.625rem 2.5rem;
+  padding: 0.65rem 0.875rem 0.65rem 2.75rem;
   font-size: 0.875rem;
-  color: #0f172a;
-  background-color: #ffffff;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
+  color: #111827;
+  background-color: #f9fafb;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
   outline: none;
-  transition: all 0.15s ease-in-out;
+  transition: all 0.2s ease;
+  font-family: 'Inter', system-ui, sans-serif;
 }
 
 .input-field::placeholder {
-  color: #94a3b8;
+  color: #9ca3af;
 }
 
 .input-field:focus {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  border-color: #059669;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.12);
 }
 
 .input-field.input-ok {
   border-color: #22c55e;
+  background-color: #f0fdf4;
 }
 
 .input-field.input-err {
   border-color: #ef4444;
+  background-color: #fef2f2;
 }
 
 .toggle-password {
@@ -462,7 +485,7 @@ const handleRegister = async () => {
   right: 0.75rem;
   background: none;
   border: none;
-  color: #94a3b8;
+  color: #9ca3af;
   cursor: pointer;
   padding: 0;
   display: flex;
@@ -472,20 +495,20 @@ const handleRegister = async () => {
 }
 
 .toggle-password:hover {
-  color: #475569;
+  color: #059669;
 }
 
 .strength-wrap {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  margin-top: 0.25rem;
+  margin-top: 0.375rem;
 }
 
 .strength-track {
   flex: 1;
-  height: 4px;
-  background: #e2e8f0;
+  height: 5px;
+  background: #e5e7eb;
   border-radius: 999px;
   overflow: hidden;
 }
@@ -498,41 +521,53 @@ const handleRegister = async () => {
 
 .strength-text {
   font-size: 0.75rem;
-  font-weight: 500;
+  font-weight: 600;
+  min-width: 65px;
+  text-align: right;
 }
 
 .hint-ok {
   font-size: 0.75rem;
   color: #16a34a;
+  font-weight: 500;
   margin: 0.15rem 0 0 0;
 }
 
 .hint-err {
   font-size: 0.75rem;
   color: #dc2626;
+  font-weight: 500;
   margin: 0.15rem 0 0 0;
 }
 
 .btn-primary {
   width: 100%;
-  height: 42px;
-  background-color: #0f172a;
+  height: 46px;
+  background: #059669;
   color: #ffffff;
-  font-size: 0.875rem;
-  font-weight: 500;
+  font-size: 0.9rem;
+  font-weight: 600;
   border: none;
-  border-radius: 8px;
+  border-radius: 12px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  transition: background-color 0.15s ease;
+  transition: all 0.2s ease;
   margin-top: 0.5rem;
+  box-shadow: 0 4px 14px -2px rgba(5, 150, 105, 0.35);
+  font-family: 'Inter', system-ui, sans-serif;
 }
 
 .btn-primary:hover:not(:disabled) {
-  background-color: #1e293b;
+  background: #047857;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px -2px rgba(5, 150, 105, 0.45);
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: translateY(0);
 }
 
 .btn-primary:disabled {
@@ -555,21 +590,23 @@ const handleRegister = async () => {
 
 .card-footer {
   text-align: center;
-  font-size: 0.85rem;
+  font-size: 0.875rem;
   color: #64748b;
-  margin-top: 1.75rem;
+  margin-top: 1.5rem;
   display: flex;
   justify-content: center;
   gap: 0.35rem;
 }
 
 .link {
-  color: #2563eb;
-  font-weight: 500;
+  color: #059669;
+  font-weight: 600;
   text-decoration: none;
+  transition: color 0.15s;
 }
 
 .link:hover {
+  color: #047857;
   text-decoration: underline;
 }
 

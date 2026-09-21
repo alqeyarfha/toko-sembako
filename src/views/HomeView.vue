@@ -70,7 +70,7 @@ const getProductImageUrl = (product) => {
   const imageValue = product?.gambar || product?.foto || product?.image || product?.foto_url || product?.image_url || product?.photo || product?.cover || ''
 
   if (!imageValue || typeof imageValue !== 'string') {
-    return 'https://placehold.co/300x300/cbd5e1/475569?text=Produk'
+    return 'https://placehold.co/300x300/d1fae5/065f46?text=Produk'
   }
 
   const normalized = imageValue.trim()
@@ -129,6 +129,14 @@ const addToCart = (product, event) => {
   alert(`${product.nama_produk || product.nama} berhasil ditambahkan ke keranjang!`)
 }
 
+const categoryIcons = {
+  'Semua': '🛒',
+  'Beras': '🌾',
+  'Minyak': '🫙',
+  'Gula & Garam': '🧂',
+  'Bumbu': '🌶️',
+}
+
 onMounted(() => {
   fetchProducts()
   refreshCartCount()
@@ -137,62 +145,87 @@ onMounted(() => {
 
 <template>
   <div class="space-y-6">
-    <section class="rounded-3xl bg-gradient-to-br from-slate-300 via-slate-200 to-slate-300 p-6 shadow-sm sm:p-8">
-      <div class="flex items-center justify-between gap-4">
+    <!-- Hero Banner -->
+    <section class="relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+      <div class="relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
         <div>
-          <span class="inline-flex rounded-full border border-slate-400 bg-white/70 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-slate-700">
-            Promo Sembako
+          <span class="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
+            <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+            Toko Sembako Online
           </span>
-          <h2 class="mt-4 text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
-            Belanja kebutuhan harianmu dengan praktis
+          <h2 class="mt-3 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl leading-tight">
+            Belanja kebutuhan harian<br class="hidden sm:block" /> praktis, hemat & terpercaya 🛒
           </h2>
+          <p class="mt-2 max-w-2xl text-sm text-slate-500">
+            Kebutuhan dapur harian langsung dari toko terdekat dengan produk lengkap, segar, dan harga terjangkau.
+          </p>
+        </div>
+        <div class="shrink-0">
+          <button
+            @click="router.push('/keranjang')"
+            class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 px-5 py-2.5 text-xs font-semibold text-white transition-all shadow-sm"
+          >
+            🛒
+            <span>Keranjang Belanja</span>
+            <span v-if="cartCount > 0" class="rounded-full bg-white/20 text-white px-2 py-0.5 text-[10px] font-bold">
+              {{ cartCount }}
+            </span>
+          </button>
         </div>
       </div>
-      <p class="mt-3 max-w-2xl text-sm text-slate-700">
-        Kebutuhan dapur harian langsung dari toko terdekat dengan pilihan produk yang rapi dan mudah dipilih.
-      </p>
     </section>
 
-    <section class="rounded-3xl border border-slate-300 bg-gradient-to-br from-white to-slate-50 p-5 shadow-sm sm:p-6">
-      <h3 class="mb-4 text-lg font-semibold text-slate-900">Kategori</h3>
+    <!-- Kategori -->
+    <section class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+      <h3 class="mb-4 text-sm font-bold text-slate-700 uppercase tracking-wider">🗂 Pilih Kategori</h3>
       <div class="flex flex-wrap gap-2">
         <button
           v-for="cat in categories"
           :key="cat"
           @click="selectedCategory = cat"
           :class="[
-            'whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition',
+            'whitespace-nowrap rounded-full px-4 py-2 text-xs font-semibold transition-all duration-200 flex items-center gap-2',
             selectedCategory === cat
-              ? 'bg-slate-500 text-white shadow-md'
-              : 'border border-slate-300 bg-slate-100 text-slate-700 hover:border-slate-400 hover:bg-slate-200'
+              ? 'bg-emerald-600 text-white shadow-sm'
+              : 'border border-slate-200 bg-white text-slate-600 hover:border-emerald-300 hover:text-emerald-700'
           ]"
         >
+          <span>{{ categoryIcons[cat] || '📦' }}</span>
           {{ cat }}
         </button>
       </div>
     </section>
 
-    <section class="rounded-3xl border border-slate-300 bg-gradient-to-br from-white to-slate-50 p-5 shadow-sm sm:p-6">
+    <!-- Daftar Produk -->
+    <section class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
       <div class="mb-5 flex items-center justify-between gap-3">
-        <h3 class="text-lg font-semibold text-slate-900">Daftar Produk</h3>
+        <div>
+          <h3 class="text-base font-bold text-slate-800">Daftar Produk</h3>
+          <p class="text-xs text-slate-400 mt-0.5">{{ filteredProducts.length }} produk ditemukan</p>
+        </div>
         <button
           @click="router.push('/keranjang')"
-          class="inline-flex items-center gap-2 rounded-lg border border-slate-400 bg-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-800 transition hover:border-slate-500 hover:bg-slate-300"
+          class="inline-flex items-center gap-2 rounded-xl bg-emerald-50 border border-emerald-200 px-3.5 py-2 text-xs font-semibold text-emerald-700 hover:bg-emerald-100 transition"
         >
           🛒 Keranjang: {{ cartCount }} jenis
         </button>
       </div>
 
-      <div v-if="loading" class="py-12 text-center text-sm text-slate-500">
-        Memuat data dari database...
+      <div v-if="loading" class="py-16 text-center">
+        <div class="inline-flex flex-col items-center gap-3">
+          <div class="h-10 w-10 rounded-full border-4 border-slate-200 border-t-emerald-600 animate-spin"></div>
+          <p class="text-sm text-slate-400 font-medium">Memuat produk...</p>
+        </div>
       </div>
 
-      <div v-else-if="errorMessage" class="py-12 text-center text-sm text-red-500">
-        {{ errorMessage }}
+      <div v-else-if="errorMessage" class="py-12 rounded-2xl bg-red-50 border border-red-100 text-center">
+        <div class="text-3xl mb-2">⚠️</div>
+        <p class="text-sm text-red-600 font-medium">{{ errorMessage }}</p>
       </div>
 
-      <div v-else-if="filteredProducts.length === 0" class="py-12 text-center text-sm text-slate-400">
-        Tidak ada produk dalam kategori ini.
+      <div v-else-if="filteredProducts.length === 0" class="py-16 text-center">
+        <div class="text-4xl mb-3">📭</div>
+        <p class="text-sm text-slate-500 font-medium">Tidak ada produk dalam kategori ini.</p>
       </div>
 
       <div v-else class="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-5">
@@ -200,9 +233,9 @@ onMounted(() => {
           v-for="product in filteredProducts"
           :key="product?.id || Math.random()"
           @click="product?.id && goToDetail(product.id)"
-          class="group flex cursor-pointer flex-col justify-between rounded-2xl border border-slate-300 bg-gradient-to-br from-white to-slate-50 p-3 shadow-sm transition hover:-translate-y-0.5 hover:border-slate-400 hover:shadow-md"
+          class="group flex cursor-pointer flex-col justify-between rounded-2xl border border-slate-200 bg-white p-3 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-slate-300 hover:shadow-md"
         >
-          <div class="relative mb-3 overflow-hidden rounded-2xl bg-slate-300">
+          <div class="relative mb-3 overflow-hidden rounded-xl bg-slate-50">
             <img
               :src="getProductImageUrl(product)"
               :alt="product?.nama_produk || product?.nama || 'Produk'"
@@ -210,19 +243,19 @@ onMounted(() => {
             />
             <span
               :class="[
-                'absolute left-2 top-2 rounded-full px-2 py-1 text-[10px] font-semibold text-white',
-                (product?.stok || 0) < 10 ? 'bg-red-500' : 'bg-slate-500'
+                'absolute left-2 top-2 rounded-full px-2 py-0.5 text-[10px] font-bold text-white shadow-sm',
+                (product?.stok || 0) < 10 ? 'bg-rose-500' : 'bg-emerald-600'
               ]"
             >
               Stok: {{ product?.stok || 0 }}
             </span>
           </div>
 
-          <div class="space-y-2">
-            <p class="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+          <div class="space-y-1.5">
+            <p class="text-[10px] font-bold uppercase tracking-wider text-emerald-600">
               {{ getCategoryName(product?.kategori) }}
             </p>
-            <h4 class="text-sm font-semibold text-slate-800 line-clamp-2">
+            <h4 class="text-sm font-semibold text-slate-800 line-clamp-2 leading-tight">
               {{ product?.nama_produk || product?.nama || 'Tanpa Nama' }}
             </h4>
 
@@ -230,15 +263,15 @@ onMounted(() => {
               <span class="text-base font-bold text-slate-900">
                 Rp {{ Number(product?.harga || 0).toLocaleString('id-ID') }}
               </span>
-              <span class="text-[10px] text-slate-500">/ {{ product?.satuan || 'pcs' }}</span>
+              <span class="text-[10px] text-slate-400">/ {{ product?.satuan || 'pcs' }}</span>
             </div>
           </div>
 
           <button
             @click="addToCart(product, $event)"
-            class="mt-4 w-full rounded-xl bg-slate-500 px-3 py-2 text-xs font-semibold text-white transition hover:bg-slate-600"
+            class="mt-3 w-full rounded-xl bg-emerald-600 hover:bg-emerald-700 px-3 py-2.5 text-xs font-semibold text-white transition-all duration-200 shadow-sm active:scale-95"
           >
-            + Beli
+            + Tambah ke Keranjang
           </button>
         </article>
       </div>

@@ -3,27 +3,28 @@
     <!-- Header Halaman -->
     <div class="flex flex-wrap items-center justify-between gap-4">
       <div>
-        <div class="flex items-center gap-2">
-          <span class="rounded-lg bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-1">Area Admin</span>
-          <span class="text-slate-400 text-xs">•</span>
-          <span class="text-slate-500 text-xs">Manajemen Pesanan</span>
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="rounded-xl bg-emerald-50 text-emerald-700 text-xs font-semibold px-3 py-1 border border-emerald-200">🛡️ Area Admin</span>
+          <span class="text-slate-300">•</span>
+          <span class="text-slate-500 text-xs font-medium">Manajemen Pesanan</span>
         </div>
-        <h2 class="text-2xl font-bold text-slate-800 mt-1">Pusat Verifikasi & Kelola Transaksi</h2>
-        <p class="text-xs text-slate-500">Periksa bukti pembayaran transfer dari pembeli dan verifikasi pesanan agar segera diproses.</p>
+        <h2 class="text-2xl font-bold text-slate-800 mt-1.5">Pusat Verifikasi & Kelola Transaksi</h2>
+        <p class="text-xs text-slate-500 mt-0.5">Periksa bukti pembayaran transfer dari pembeli dan verifikasi pesanan agar segera diproses.</p>
       </div>
 
       <div class="flex items-center gap-3">
         <button
           @click="loadOrders"
-          class="rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-sm hover:bg-slate-50 transition flex items-center gap-1.5"
+          class="rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 shadow-sm hover:bg-emerald-50 hover:border-emerald-200 hover:text-emerald-700 transition-all flex items-center gap-2"
         >
-          <span>↻</span> Segarkan
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          Segarkan
         </button>
         <router-link
           to="/dashboard"
-          class="rounded-xl bg-slate-800 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-slate-900 transition flex items-center gap-1.5"
+          class="rounded-xl bg-emerald-600 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-emerald-700 transition-all flex items-center gap-2"
         >
-          <span>📊</span> Ke Dashboard
+          📊 Ke Dashboard
         </router-link>
       </div>
     </div>
@@ -33,79 +34,86 @@
       <div class="flex flex-wrap items-center justify-between gap-3">
         <!-- Input Pencarian -->
         <div class="relative flex-1 min-w-[240px] max-w-md">
-          <span class="absolute inset-y-0 left-3 flex items-center text-slate-400 text-sm">🔍</span>
+          <span class="absolute inset-y-0 left-3 flex items-center text-slate-400">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          </span>
           <input
             v-model="searchQuery"
             type="text"
             placeholder="Cari ID pesanan, nama pembeli, atau catatan..."
-            class="w-full rounded-xl border border-slate-200 bg-slate-50 pl-9 pr-4 py-2 text-xs text-slate-800 outline-none transition focus:border-slate-400 focus:bg-white"
+            class="w-full rounded-xl border border-slate-200 bg-slate-50 pl-9 pr-4 py-2.5 text-xs text-slate-800 outline-none transition focus:border-emerald-500 focus:bg-white focus:ring-2 focus:ring-emerald-100"
           />
         </div>
 
         <!-- Filter Tab Buttons -->
-        <div class="flex flex-wrap items-center gap-1.5 bg-slate-100 p-1 rounded-xl text-xs">
+        <div class="flex flex-wrap items-center gap-1.5 bg-slate-100 p-1.5 rounded-2xl text-xs">
           <button
             @click="activeStatusFilter = 'semua'"
-            :class="['px-3 py-1.5 rounded-lg font-semibold transition', activeStatusFilter === 'semua' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-600 hover:text-slate-900']"
+            :class="['px-3.5 py-2 rounded-xl font-bold transition-all duration-200', activeStatusFilter === 'semua' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-800 hover:bg-white/60']"
           >
             Semua ({{ allOrders.length }})
           </button>
           <button
             @click="activeStatusFilter = 'pending'"
-            :class="['px-3 py-1.5 rounded-lg font-semibold transition flex items-center gap-1.5', activeStatusFilter === 'pending' ? 'bg-amber-500 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900']"
+            :class="['px-3.5 py-2 rounded-xl font-bold transition-all duration-200 flex items-center gap-1.5', activeStatusFilter === 'pending' ? 'bg-amber-500 text-white shadow-sm' : 'text-slate-500 hover:text-slate-800 hover:bg-white/60']"
           >
-            <span>Butuh Verifikasi</span>
-            <span class="rounded-full bg-white/25 px-1.5 py-0.2 text-[10px]">{{ countPending }}</span>
+            <span>⏳ Pending</span>
+            <span v-if="countPending > 0" class="rounded-full bg-white/30 px-1.5 text-[10px] font-bold">{{ countPending }}</span>
           </button>
           <button
             @click="activeStatusFilter = 'terverifikasi'"
-            :class="['px-3 py-1.5 rounded-lg font-semibold transition', activeStatusFilter === 'terverifikasi' ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900']"
+            :class="['px-3.5 py-2 rounded-xl font-bold transition-all duration-200', activeStatusFilter === 'terverifikasi' ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-800 hover:bg-white/60']"
           >
-            Terverifikasi ({{ countVerified }})
+            ✅ Terverifikasi ({{ countVerified }})
           </button>
           <button
             @click="activeStatusFilter = 'selesai'"
-            :class="['px-3 py-1.5 rounded-lg font-semibold transition', activeStatusFilter === 'selesai' ? 'bg-slate-800 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900']"
+            :class="['px-3.5 py-2 rounded-xl font-bold transition-all duration-200', activeStatusFilter === 'selesai' ? 'bg-blue-500 text-white shadow-sm' : 'text-slate-500 hover:text-slate-800 hover:bg-white/60']"
           >
-            Selesai ({{ countCompleted }})
+            📦 Selesai ({{ countCompleted }})
           </button>
           <button
             @click="activeStatusFilter = 'ditolak'"
-            :class="['px-3 py-1.5 rounded-lg font-semibold transition', activeStatusFilter === 'ditolak' ? 'bg-rose-600 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900']"
+            :class="['px-3.5 py-2 rounded-xl font-bold transition-all duration-200', activeStatusFilter === 'ditolak' ? 'bg-rose-500 text-white shadow-sm' : 'text-slate-500 hover:text-slate-800 hover:bg-white/60']"
           >
-            Ditolak ({{ countRejected }})
+            ✕ Ditolak ({{ countRejected }})
           </button>
         </div>
       </div>
     </div>
 
     <!-- Alert jika ada pesanan pending -->
-    <div v-if="countPending > 0 && activeStatusFilter !== 'pending'" class="rounded-2xl border border-amber-200 bg-amber-50/70 p-4 flex items-center justify-between gap-3 text-xs">
-      <div class="flex items-center gap-2.5 text-amber-800">
-        <span class="text-lg">⚠️</span>
+    <div v-if="countPending > 0 && activeStatusFilter !== 'pending'" class="rounded-2xl border border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50 p-4 flex items-center justify-between gap-3">
+      <div class="flex items-center gap-3 text-amber-800">
+        <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-200">
+          <span class="text-lg">⚠️</span>
+        </div>
         <div>
-          <span class="font-bold">Ada {{ countPending }} pesanan menunggu verifikasi!</span>
-          <span class="text-amber-700 ml-1">Silakan periksa bukti transfer dan klik tombol verifikasi agar pesanan dapat diproses.</span>
+          <span class="font-bold text-sm">Ada {{ countPending }} pesanan menunggu verifikasi!</span>
+          <p class="text-xs text-amber-700 mt-0.5">Silakan periksa bukti transfer dan klik tombol verifikasi agar pesanan dapat diproses.</p>
         </div>
       </div>
       <button
         @click="activeStatusFilter = 'pending'"
-        class="rounded-xl bg-amber-600 hover:bg-amber-700 text-white px-3.5 py-1.5 font-semibold text-xs transition shadow-sm"
+        class="rounded-xl bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 font-bold text-xs transition shadow-sm hover:shadow whitespace-nowrap"
       >
-        Tampilkan Pesanan Pending
+        Tampilkan Pending
       </button>
     </div>
 
     <!-- Loading State -->
-    <div v-if="loading" class="py-16 text-center text-slate-500 text-sm font-medium">
-      Memuat data transaksi...
+    <div v-if="loading" class="py-16 text-center">
+      <div class="inline-flex flex-col items-center gap-3">
+        <div class="h-12 w-12 rounded-full border-4 border-slate-200 border-t-emerald-600 animate-spin"></div>
+        <p class="text-slate-400 text-sm font-medium">Memuat data transaksi...</p>
+      </div>
     </div>
 
     <!-- Empty State -->
-    <div v-else-if="filteredOrders.length === 0" class="rounded-2xl border border-slate-200 bg-white p-12 text-center text-slate-400 text-xs space-y-2">
-      <div class="text-3xl">📭</div>
-      <p class="font-semibold text-slate-600 text-sm">Tidak ada data transaksi yang sesuai.</p>
-      <p>Coba gunakan kata kunci lain atau ubah filter status di atas.</p>
+    <div v-else-if="filteredOrders.length === 0" class="rounded-2xl border border-slate-200 bg-white p-16 text-center">
+      <div class="text-5xl mb-4">📭</div>
+      <p class="font-bold text-slate-600 text-base">Tidak ada data transaksi yang sesuai.</p>
+      <p class="text-xs text-slate-400 mt-1">Coba gunakan kata kunci lain atau ubah filter status di atas.</p>
     </div>
 
     <!-- Tabel Data Transaksi -->
@@ -114,95 +122,101 @@
         <table class="w-full text-left text-xs">
           <thead class="bg-slate-50 text-slate-600 uppercase border-b border-slate-200 text-[11px] font-bold tracking-wider">
             <tr>
-              <th class="p-3.5">ID & Waktu</th>
-              <th class="p-3.5">Pelanggan</th>
-              <th class="p-3.5">Total & Metode</th>
-              <th class="p-3.5 text-center">Bukti Pembayaran</th>
-              <th class="p-3.5 text-center">Status</th>
-              <th class="p-3.5 text-center">Aksi Verifikasi</th>
+              <th class="p-4">ID & Waktu</th>
+              <th class="p-4">Pelanggan</th>
+              <th class="p-4">Total & Metode</th>
+              <th class="p-4 text-center">Bukti Pembayaran</th>
+              <th class="p-4 text-center">Status</th>
+              <th class="p-4 text-center">Aksi Verifikasi</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-100 text-slate-700">
             <tr
               v-for="order in filteredOrders"
               :key="order.id"
-              :class="['transition hover:bg-slate-50', order.status === 'pending' ? 'bg-amber-50/25' : '']"
+              :class="['transition-colors hover:bg-slate-50/50', order.status === 'pending' ? 'bg-amber-50/30' : '']"
             >
               <!-- ID & Waktu -->
-              <td class="p-3.5">
-                <div class="font-bold text-slate-900">#{{ order.id }}</div>
+              <td class="p-4">
+                <div class="font-bold text-slate-900 text-sm">#{{ order.id }}</div>
                 <div class="text-[11px] text-slate-400 mt-0.5">
                   {{ order.created_at ? new Date(order.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '-' }}
                 </div>
               </td>
 
               <!-- Pelanggan -->
-              <td class="p-3.5">
-                <div class="font-semibold text-slate-800">{{ getCustomerName(order) }}</div>
-                <div class="text-[11px] text-slate-500">{{ order.no_hp || order.user?.no_hp || '-' }}</div>
+              <td class="p-4">
+                <div class="font-bold text-slate-800">{{ getCustomerName(order) }}</div>
+                <div class="text-[11px] text-slate-500 mt-0.5">{{ order.no_hp || order.user?.no_hp || '-' }}</div>
                 <div v-if="order.catatan" class="text-[10px] text-slate-400 italic mt-0.5 truncate max-w-[170px]" :title="order.catatan">
                   "{{ order.catatan }}"
                 </div>
               </td>
 
               <!-- Total Belanja & Metode Bayar -->
-              <td class="p-3.5">
-                <div class="font-bold text-slate-900">
+              <td class="p-4">
+                <div class="font-bold text-slate-900 text-sm">
                   Rp {{ Number(order.total_harga || order.total || 0).toLocaleString('id-ID') }}
                 </div>
-                <span class="inline-block rounded-md bg-slate-100 px-2 py-0.5 text-[10px] font-medium text-slate-600 uppercase mt-0.5">
-                  {{ order.metode_pembayaran === 'transfer' ? 'Transfer Bank' : (order.metode_pembayaran || 'COD') }}
+                <span :class="[
+                  'inline-block rounded-lg px-2.5 py-0.5 text-[10px] font-bold uppercase mt-1',
+                  (order.metode_pembayaran || 'transfer').toLowerCase().includes('transfer')
+                    ? 'bg-blue-100 text-blue-700'
+                    : 'bg-orange-100 text-orange-700'
+                ]">
+                  {{ order.metode_pembayaran === 'transfer' ? '💳 Transfer Bank' : (order.metode_pembayaran ? `🏠 ${order.metode_pembayaran}` : '🏠 COD') }}
                 </span>
               </td>
 
               <!-- Bukti Pembayaran (Foto Struk) -->
-              <td class="p-3.5 text-center">
-                <div v-if="order.bukti_transaksi" class="flex flex-col items-center gap-1">
+              <td class="p-4 text-center">
+                <div v-if="order.bukti_transaksi" class="flex flex-col items-center gap-1.5">
                   <img
                     :src="getProofImageUrl(order.bukti_transaksi)"
                     alt="Bukti Transfer"
                     @click="openProofPreview(order.bukti_transaksi, order.id)"
-                    class="h-11 w-11 rounded-lg object-cover border border-slate-200 shadow-sm cursor-pointer hover:scale-105 transition"
+                    class="h-12 w-12 rounded-xl object-cover border border-slate-200 shadow-sm cursor-pointer hover:scale-105 transition hover:border-emerald-500"
                   />
                   <button
                     type="button"
                     @click="openProofPreview(order.bukti_transaksi, order.id)"
-                    class="text-[10px] font-semibold text-blue-600 hover:text-blue-800 underline"
+                    class="text-[10px] font-semibold text-emerald-700 hover:text-emerald-800 bg-emerald-50 border border-emerald-200/70 px-2 py-0.5 rounded-lg transition"
                   >
-                    Lihat Foto
+                    👁 Lihat Foto
                   </button>
                 </div>
-                <div v-else class="text-slate-400 text-[11px] italic">
+                <div v-else class="text-slate-300 text-[11px] italic">
                   Belum ada bukti
                 </div>
               </td>
 
               <!-- Status Badge -->
-              <td class="p-3.5 text-center">
-                <span :class="['inline-flex items-center gap-1 rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-wider', getStatusBadgeClass(order.status)]">
-                  ● {{ getStatusLabel(order.status) }}
+              <td class="p-4 text-center">
+                <span :class="['inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide border', getStatusBadgeClass(order.status)]">
+                  <span class="h-1.5 w-1.5 rounded-full bg-current opacity-70"></span>
+                  {{ getStatusLabel(order.status) }}
                 </span>
               </td>
 
               <!-- Aksi Verifikasi -->
-              <td class="p-3.5 text-center">
-                <div class="flex items-center justify-center gap-1.5">
+              <td class="p-4 text-center">
+                <div class="flex items-center justify-center gap-2 flex-wrap">
                   <!-- Aksi jika Pending -->
                   <template v-if="order.status === 'pending'">
                     <button
                       type="button"
                       :disabled="actionLoadingId === order.id"
                       @click="handleVerify(order.id, 'terverifikasi')"
-                      class="rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 font-semibold text-xs transition shadow-sm flex items-center gap-1 disabled:opacity-50"
+                      class="rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-2 font-semibold text-xs transition-all shadow-sm disabled:opacity-50 flex items-center gap-1"
                       title="Setujui & Verifikasi Pembayaran"
                     >
-                      <span>✓</span> Verifikasi
+                      ✓ Verifikasi
                     </button>
                     <button
                       type="button"
                       :disabled="actionLoadingId === order.id"
                       @click="handleVerify(order.id, 'ditolak')"
-                      class="rounded-xl bg-rose-100 hover:bg-rose-200 text-rose-700 px-2.5 py-1.5 font-semibold text-xs transition disabled:opacity-50"
+                      class="rounded-xl bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-600 hover:text-rose-700 px-3 py-2 font-bold text-xs transition disabled:opacity-50"
                       title="Tolak Pembayaran"
                     >
                       ✕ Tolak
@@ -215,10 +229,10 @@
                       type="button"
                       :disabled="actionLoadingId === order.id"
                       @click="handleVerify(order.id, 'selesai')"
-                      class="rounded-xl bg-slate-800 hover:bg-slate-900 text-white px-3 py-1.5 font-semibold text-xs transition disabled:opacity-50"
+                      class="rounded-xl bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white px-3.5 py-2 font-bold text-xs transition-all shadow-sm disabled:opacity-50"
                       title="Tandai pesanan telah selesai dikirim"
                     >
-                      ✓ Selesaikan
+                      📦 Selesaikan
                     </button>
                   </template>
 
@@ -226,10 +240,10 @@
                   <button
                     type="button"
                     @click="openOrderDetail(order)"
-                    class="rounded-xl border border-slate-300 bg-white hover:bg-slate-100 text-slate-700 px-2.5 py-1.5 font-semibold text-xs transition shadow-2xs"
+                    class="rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-800 px-3 py-2 font-bold text-xs transition-all shadow-sm hover:shadow"
                     title="Buka rincian lengkap pesanan"
                   >
-                    Detail
+                    📋 Detail
                   </button>
                 </div>
               </td>
@@ -242,28 +256,28 @@
     <!-- MODAL PREVIEW GAMBAR BUKTI TRANSAKSI (LIGHTBOX) -->
     <div
       v-if="previewModalOpen"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/75 p-4 backdrop-blur-sm"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"
       @click.self="closeProofPreview"
     >
-      <div class="w-full max-w-lg rounded-2xl bg-white p-5 shadow-2xl space-y-4">
+      <div class="w-full max-w-lg rounded-3xl bg-white p-6 shadow-2xl space-y-4">
         <div class="flex items-center justify-between border-b border-slate-100 pb-3">
           <div>
-            <h3 class="font-bold text-slate-800 text-sm">{{ previewOrderTitle }}</h3>
-            <p class="text-[11px] text-slate-500">Struk bukti pembayaran transfer dari pembeli</p>
+            <h3 class="font-bold text-slate-800 text-sm">🧾 {{ previewOrderTitle }}</h3>
+            <p class="text-[11px] text-slate-500 mt-0.5">Struk bukti pembayaran transfer dari pembeli</p>
           </div>
           <button
             @click="closeProofPreview"
-            class="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700 text-sm font-bold"
+            class="rounded-xl p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors"
           >
-            ✕
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
           </button>
         </div>
 
-        <div class="max-h-[70vh] overflow-auto rounded-xl bg-slate-100 p-2 flex items-center justify-center">
+        <div class="max-h-[70vh] overflow-auto rounded-2xl bg-slate-100 p-2 flex items-center justify-center">
           <img
             :src="previewImageUrl"
             alt="Bukti Transfer"
-            class="max-h-[65vh] w-auto max-w-full rounded-lg object-contain shadow-sm"
+            class="max-h-[65vh] w-auto max-w-full rounded-xl object-contain shadow-sm"
           />
         </div>
 
@@ -272,7 +286,7 @@
             <button
               type="button"
               @click="handleVerify(selectedPreviewOrder.id, 'terverifikasi'); closeProofPreview()"
-              class="rounded-xl bg-emerald-600 px-4 py-2 text-xs font-semibold text-white hover:bg-emerald-700 transition"
+              class="rounded-xl bg-emerald-600 hover:bg-emerald-700 px-5 py-2.5 text-xs font-semibold text-white transition shadow-sm"
             >
               ✓ Verifikasi Pesanan Ini Sekarang
             </button>
@@ -281,7 +295,7 @@
           <button
             type="button"
             @click="closeProofPreview"
-            class="rounded-xl bg-slate-800 px-5 py-2 text-xs font-semibold text-white hover:bg-slate-900 transition"
+            class="rounded-xl border border-slate-200 px-5 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition"
           >
             Tutup
           </button>
@@ -292,47 +306,47 @@
     <!-- MODAL DETAIL LENGKAP PESANAN -->
     <div
       v-if="detailModalOpen && selectedDetailOrder"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/75 p-4 backdrop-blur-sm"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"
       @click.self="detailModalOpen = false"
     >
-      <div class="w-full max-w-xl rounded-2xl bg-white p-6 shadow-2xl space-y-5">
+      <div class="w-full max-w-xl rounded-3xl bg-white p-6 shadow-2xl space-y-5">
         <div class="flex items-center justify-between border-b border-slate-100 pb-3">
           <div>
-            <h3 class="font-bold text-slate-800 text-base">Rincian Transaksi #{{ selectedDetailOrder.id }}</h3>
-            <p class="text-xs text-slate-500">
+            <h3 class="font-bold text-slate-800 text-base">🧾 Rincian Transaksi #{{ selectedDetailOrder.id }}</h3>
+            <p class="text-xs text-slate-400 mt-0.5">
               Waktu: {{ selectedDetailOrder.created_at ? new Date(selectedDetailOrder.created_at).toLocaleString('id-ID') : '-' }}
             </p>
           </div>
           <button
             @click="detailModalOpen = false"
-            class="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-700 text-sm font-bold"
+            class="rounded-xl p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors"
           >
-            ✕
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
           </button>
         </div>
 
         <!-- Info Pembeli -->
-        <div class="rounded-xl border border-slate-200 bg-slate-50 p-3.5 text-xs space-y-1">
-          <p class="font-bold text-slate-800">Nama Penerima: {{ getCustomerName(selectedDetailOrder) }}</p>
-          <p class="text-slate-600">No. Telepon: {{ selectedDetailOrder.no_hp || selectedDetailOrder.user?.no_hp || '-' }}</p>
-          <p class="text-slate-600">Alamat: {{ selectedDetailOrder.alamat || selectedDetailOrder.user?.alamat || 'Belum diatur' }}</p>
-          <p v-if="selectedDetailOrder.catatan" class="text-slate-500 italic">Catatan: "{{ selectedDetailOrder.catatan }}"</p>
+        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-xs space-y-1.5">
+          <p class="font-bold text-slate-800 text-sm">👤 {{ getCustomerName(selectedDetailOrder) }}</p>
+          <p class="text-slate-600">📱 {{ selectedDetailOrder.no_hp || selectedDetailOrder.user?.no_hp || '-' }}</p>
+          <p class="text-slate-600">📍 {{ selectedDetailOrder.alamat || selectedDetailOrder.user?.alamat || 'Belum diatur' }}</p>
+          <p v-if="selectedDetailOrder.catatan" class="text-slate-500 italic">💬 "{{ selectedDetailOrder.catatan }}"</p>
         </div>
 
         <!-- Rincian Produk Pesanan -->
         <div class="space-y-2">
-          <p class="text-xs font-bold uppercase tracking-wider text-slate-500">Daftar Barang Belanja</p>
-          <div class="max-h-44 overflow-y-auto divide-y divide-slate-100 rounded-xl border border-slate-200 p-3 text-xs">
+          <p class="text-xs font-bold uppercase tracking-wider text-slate-500">🛒 Daftar Barang Belanja</p>
+          <div class="max-h-44 overflow-y-auto divide-y divide-slate-100 rounded-2xl border border-slate-200 p-3 text-xs">
             <div
               v-for="(item, idx) in getOrderItems(selectedDetailOrder)"
               :key="idx"
-              class="py-2 flex items-center justify-between"
+              class="py-2.5 flex items-center justify-between"
             >
               <div>
                 <span class="font-semibold text-slate-800">{{ item.nama_produk || item.nama || item.product_name || 'Produk' }}</span>
                 <span class="text-slate-400 text-[11px] ml-2">x{{ item.qty || item.jumlah || 1 }}</span>
               </div>
-              <span class="font-bold text-slate-700">
+              <span class="font-bold text-emerald-600">
                 Rp {{ ((Number(item.harga || 0)) * Number(item.qty || item.jumlah || 1)).toLocaleString('id-ID') }}
               </span>
             </div>
@@ -340,10 +354,10 @@
         </div>
 
         <!-- Bukti Pembayaran di Modal Detail -->
-        <div class="rounded-xl border border-slate-200 p-3.5 flex items-center justify-between">
+        <div class="rounded-2xl border border-slate-200 p-4 flex items-center justify-between bg-slate-50">
           <div>
-            <p class="text-xs font-bold text-slate-800">Bukti Pembayaran</p>
-            <p class="text-[11px] text-slate-500">
+            <p class="text-xs font-bold text-slate-800">📸 Bukti Pembayaran</p>
+            <p class="text-[11px] text-slate-500 mt-0.5">
               {{ selectedDetailOrder.bukti_transaksi ? 'Foto struk telah dilampirkan' : 'Belum diunggah oleh pembeli' }}
             </p>
           </div>
@@ -351,18 +365,18 @@
             <button
               type="button"
               @click="openProofPreview(selectedDetailOrder.bukti_transaksi, selectedDetailOrder.id)"
-              class="rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 px-3.5 py-1.5 text-xs font-semibold transition"
+              class="rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 text-xs font-semibold transition shadow-sm"
             >
-              Lihat Bukti Foto
+              👁 Lihat Bukti Foto
             </button>
           </div>
         </div>
 
         <!-- Total Tagihan & Aksi -->
-        <div class="flex items-center justify-between border-t border-slate-100 pt-3">
+        <div class="flex items-center justify-between border-t border-slate-100 pt-4">
           <div>
-            <span class="block text-[11px] text-slate-400 uppercase font-bold">Total Pembayaran</span>
-            <span class="text-lg font-black text-slate-900">
+            <span class="block text-[11px] text-slate-400 uppercase font-bold tracking-wide">Total Pembayaran</span>
+            <span class="text-2xl font-black text-slate-900">
               Rp {{ Number(selectedDetailOrder.total_harga || selectedDetailOrder.total || 0).toLocaleString('id-ID') }}
             </span>
           </div>
@@ -372,14 +386,14 @@
               v-if="selectedDetailOrder.status === 'pending'"
               type="button"
               @click="handleVerify(selectedDetailOrder.id, 'terverifikasi'); detailModalOpen = false"
-              class="rounded-xl bg-emerald-600 px-4 py-2 text-xs font-semibold text-white hover:bg-emerald-700 transition"
+              class="rounded-xl bg-emerald-600 hover:bg-emerald-700 px-5 py-2.5 text-xs font-semibold text-white transition shadow-sm"
             >
               ✓ Verifikasi Sekarang
             </button>
             <button
               type="button"
               @click="detailModalOpen = false"
-              class="rounded-xl border border-slate-300 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition"
+              class="rounded-xl border border-slate-200 px-5 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition"
             >
               Tutup
             </button>
@@ -450,12 +464,12 @@ const getOrderItems = (order) => {
 
 const getStatusBadgeClass = (status) => {
   const s = String(status || '').toLowerCase()
-  if (s === 'pending') return 'bg-amber-100 text-amber-800 border border-amber-200'
-  if (s === 'terverifikasi') return 'bg-emerald-100 text-emerald-800 border border-emerald-200'
-  if (s === 'diproses') return 'bg-blue-100 text-blue-800 border border-blue-200'
-  if (s === 'ditolak') return 'bg-rose-100 text-rose-800 border border-rose-200'
-  if (s === 'selesai') return 'bg-slate-100 text-slate-800 border border-slate-300'
-  return 'bg-slate-100 text-slate-700 border border-slate-200'
+  if (s === 'pending') return 'bg-amber-50 text-amber-700 border-amber-200'
+  if (s === 'terverifikasi') return 'bg-emerald-50 text-emerald-700 border-emerald-200'
+  if (s === 'diproses') return 'bg-blue-50 text-blue-700 border-blue-200'
+  if (s === 'ditolak') return 'bg-rose-50 text-rose-700 border-rose-200'
+  if (s === 'selesai') return 'bg-indigo-50 text-indigo-700 border-indigo-200'
+  return 'bg-slate-50 text-slate-600 border-slate-200'
 }
 
 const getStatusLabel = (status) => {
